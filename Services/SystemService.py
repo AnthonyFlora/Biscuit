@@ -61,6 +61,9 @@ class SystemController:
 
 if __name__ == '__main__':
     while True:
-        component = SystemController()
-        component.run()
-        time.sleep(10.0)
+        try:
+            component = SystemController()
+            component.run()
+            time.sleep(10.0)
+        except:
+            print('Restarting SystemController..')
