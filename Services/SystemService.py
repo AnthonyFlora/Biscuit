@@ -38,7 +38,7 @@ class SystemController:
             self.set_service_status('SHUTTING DOWN')
             self.client.loop_stop()
             self.client.disconnect()
-            return subprocess.check_output('sudo shutdown -r now', shell=True)
+            return subprocess.check_output('reboot', shell=True)
 
     def on_receive_default(self, message):
         print('received default', message.topic)
