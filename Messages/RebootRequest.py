@@ -15,3 +15,6 @@ class RebootRequest:
     def to_json(self):
         return json.dumps(self, default=lambda x: x.__dict__)
 
+c = RebootRequest()
+c.hostname = 'gateway'
+print(c.to_json())

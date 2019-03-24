@@ -27,6 +27,7 @@ class SystemController:
 
     def on_receive(self, client, userdata, message):
         if '/biscuit/Messages/RebootRequest' in message.topic:
+            message.payload = message.payload.decode("utf-8")
             self.on_receive_reboot_request(message)
         else:
             self.on_receive_default(message)
