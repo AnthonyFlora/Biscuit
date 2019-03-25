@@ -1,4 +1,5 @@
 import Messages.RebootRequest
+import Messages.SystemUpdateRequest
 import Messages.ServiceStatus
 import paho.mqtt.client as mqtt
 import datetime
@@ -21,14 +22,19 @@ class SystemController:
         self.client.on_message = self.on_receive
         self.client.connect('iot.eclipse.org', 1883)
         self.client.subscribe('/biscuit/Messages/RebootRequest')
+        self.client.subscribe('/biscuit/Messages/SystemUpdateRequest')
 
     def on_connect(self, client, userdata, flags, rc):
         self.set_service_status('OPERATIONAL')
 
     def on_receive(self, client, userdata, message):
+        print(message.topic)
         if '/biscuit/Messages/RebootRequest' in message.topic:
             message.payload = message.payload.decode("utf-8")
             self.on_receive_reboot_request(message)
+        elif '/biscuit/Messages/SystemUpdateRequest' in message.topic:
+            message.payload = message.payload.decode("utf-8")
+            self.on_receive_system_update_request(message)
         else:
             self.on_receive_default(message)
 
@@ -36,6 +42,18 @@ class SystemController:
         m = Messages.RebootRequest.RebootRequest()
         m.from_json(message.payload)
         if m.hostname == self.hostname:
+            self.set_service_status('SHUTTING DOWN')
+            self.client.loop_stop()
+            self.client.disconnect()
+            return subprocess.check_output('reboot', shell=True)
+
+    def on_receive_system_update_request(self, message):
+        m = Messages.SystemUpdateRequest.SystemUpdateRequest()
+        m.from_json(message.payload)
+        print(m.hostname, self.hostname)
+        if m.hostname == self.hostname:
+            self.set_service_status('UPDATING')
+            subprocess.check_output('git pull', shell=True)
             self.set_service_status('SHUTTING DOWN')
             self.client.loop_stop()
             self.client.disconnect()
