@@ -1,7 +1,7 @@
 import json
 
 
-class RebootRequest:
+class SystemRebootRequest:
     def __init__(self):
         self.hostname = ''
 
