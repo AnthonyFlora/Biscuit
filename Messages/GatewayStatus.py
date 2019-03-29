@@ -1,17 +1,20 @@
 import json
 import collections
+import Messages.SurveyStatus.SurveyStatus
 
 
 class GatewayStatus:
     def __init__(self):
+        self.hostname = ''
         self.gateway_name = ''
         self.access_point_address = ''
         self.status = ''
         self.last_update = ''
         self.utilization = ''
-        self.survey_status = collections.defaultdict(lambda: SurveyStatus())
+        self.survey_status = collections.defaultdict(lambda: Messages.SurveyStatus.SurveyStatus())
 
     def from_dict(self, dict_data):
+        self.hostname = dict_data['hostname']
         self.gateway_name = dict_data['gateway_name']
         self.access_point_address = dict_data['access_point_address']
         self.status = dict_data['status']

@@ -6,10 +6,10 @@ import datetime
 import subprocess
 import time
 
-class SystemService:
+class GatewayService:
     def __init__(self):
         self.hostname = self.get_hostname()
-        self.status_topic = '/biscuit/Statuses/' + self.hostname + '/SystemService'
+        self.status_topic = '/biscuit/Statuses/' + self.hostname + '/GatewayService'
         self.state = Messages.ServiceStatus.ServiceStatus()
         self.state.hostname = self.hostname
         self.state.status = 'OFFLINE'
@@ -21,43 +21,44 @@ class SystemService:
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_receive
         self.client.connect('iot.eclipse.org', 1883)
-        self.client.subscribe('/biscuit/Messages/SystemRebootRequest')
-        self.client.subscribe('/biscuit/Messages/SystemUpdateRequest')
+        self.client.subscribe('/biscuit/Messages/GatewayRebootRequest')
+        self.client.subscribe('/biscuit/Messages/GatewayStatusRequest')
 
     def on_connect(self, client, userdata, flags, rc):
         self.set_service_status('OPERATIONAL')
 
     def on_receive(self, client, userdata, message):
         print(message.topic)
-        if '/biscuit/Messages/SystemRebootRequest' in message.topic:
+        if '/biscuit/Messages/GatewayRebootRequest' in message.topic:
             message.payload = message.payload.decode("utf-8")
-            self.on_receive_system_reboot_request(message)
-        elif '/biscuit/Messages/SystemUpdateRequest' in message.topic:
+            self.on_receive_gateway_reboot_request(message)
+        elif '/biscuit/Messages/GatewayStatusRequest' in message.topic:
             message.payload = message.payload.decode("utf-8")
-            self.on_receive_system_update_request(message)
+            self.on_receive_gateway_status_request(message)
         else:
             self.on_receive_default(message)
 
-    def on_receive_system_reboot_request(self, message):
-        m = Messages.SystemRebootRequest.SystemRebootRequest()
+    def on_receive_gateway_reboot_request(self, message):
+        m = Messages.GatewayRebootRequest.GatewayRebootRequest()
         m.from_json(message.payload)
-        if m.hostname == self.hostname:
-            self.set_service_status('SHUTTING DOWN')
-            self.client.loop_stop()
-            self.client.disconnect()
-            return subprocess.check_output('reboot', shell=True)
+        print(self.hostname, 'TODO gateway reboot request')
+        # if m.hostname == self.hostname:
+        #     self.set_service_status('SHUTTING DOWN')
+        #     self.client.loop_stop()
+        #     self.client.disconnect()
+        #     return subprocess.check_output('reboot', shell=True)
 
-    def on_receive_system_update_request(self, message):
-        m = Messages.SystemUpdateRequest.SystemUpdateRequest()
+    def on_receive_gateway_status_request(self, message):
+        m = Messages.GatewayStatusRequest.GatewayStatusRequest()
         m.from_json(message.payload)
-        print(m.hostname, self.hostname)
-        if m.hostname == self.hostname:
-            self.set_service_status('UPDATING')
-            subprocess.check_output('git pull', shell=True)
-            self.set_service_status('SHUTTING DOWN')
-            self.client.loop_stop()
-            self.client.disconnect()
-            return subprocess.check_output('reboot', shell=True)
+        print(self.hostname, 'TODO gateway status request')
+        # if m.hostname == self.hostname:
+        #     self.set_service_status('UPDATING')
+        #     subprocess.check_output('git pull', shell=True)
+        #     self.set_service_status('SHUTTING DOWN')
+        #     self.client.loop_stop()
+        #     self.client.disconnect()
+        #     return subprocess.check_output('reboot', shell=True)
 
     def on_receive_default(self, message):
         print('received default', message.topic)
@@ -80,8 +81,8 @@ class SystemService:
 if __name__ == '__main__':
     while True:
         try:
-            component = SystemService()
+            component = GatewayService()
             component.run()
             time.sleep(10.0)
         except:
-            print('Restarting SystemService..')
+            print('Restarting GatewayService..')
