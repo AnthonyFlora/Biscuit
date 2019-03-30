@@ -1,5 +1,8 @@
 #! /bin/bash
 
-export PYTHONPATH=${PWD}
-python3 Services/SystemService.py &
-python3 Services/GatewayService.py &
+
+DIRECTORY=`dirname $0`
+cd ${DIRECTORY}
+export PYTHONPATH=${DIRECTORY}
+python3 ${DIRECTORY}/Services/SystemService.py &
+python3 ${DIRECTORY}/Services/GatewayService.py &
