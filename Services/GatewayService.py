@@ -7,8 +7,9 @@ import subprocess
 import time
 
 class GatewayService:
-    def __init__(self):
+    def __init__(self, gateway=None):
         self.hostname = self.get_hostname()
+        self.gateway = gateway
         self.status_topic = '/biscuit/Statuses/' + self.hostname + '/GatewayService'
         self.state = Messages.ServiceStatus.ServiceStatus()
         self.state.hostname = self.hostname
