@@ -14,7 +14,7 @@ class SystemService:
         self.state.hostname = self.hostname
         self.state.status = 'OFFLINE'
         self.client = mqtt.Client()
-        self.client.will_set(self.status_topic, self.state.to_json(), qos=0, retain=True)
+        self.client.will_set(self.status_topic, self.state.to_json(), qos=1, retain=True)
         self.connect_to_broker()
 
     def connect_to_broker(self):
@@ -50,7 +50,6 @@ class SystemService:
     def on_receive_system_update_request(self, message):
         m = Messages.SystemUpdateRequest.SystemUpdateRequest()
         m.from_json(message.payload)
-        print(m.hostname, self.hostname)
         if m.hostname == self.hostname:
             self.set_service_status('UPDATING')
             subprocess.check_output('git pull', shell=True)
@@ -74,7 +73,7 @@ class SystemService:
 
     def send_service_status(self):
         self.state.last_update = str(datetime.datetime.now())
-        self.client.publish(self.status_topic, self.state.to_json(), qos=0, retain=True)
+        self.client.publish(self.status_topic, self.state.to_json(), qos=1, retain=True)
 
 
 if __name__ == '__main__':

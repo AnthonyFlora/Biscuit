@@ -13,7 +13,7 @@ class GatewayController:
         self.state.gateway_name = self.hostname
         self.state.status = 'OFFLINE'
         self.client = mqtt.Client()
-        self.client.will_set(self.status_topic, self.state.to_json(), qos=0, retain=True)
+        self.client.will_set(self.status_topic, self.state.to_json(), qos=1, retain=True)
         self.connect_to_broker()
 
     def connect_to_broker(self):
