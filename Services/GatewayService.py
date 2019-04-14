@@ -43,7 +43,7 @@ class GatewayService(Services.Service.Service):
         self.client.publish(self.gateway_status_topic, self.gateway_status.to_json(), qos=1, retain=True)
 
     def get_access_point_address(self):
-        cmd = '%s iwconfig 2>/dev/null | grep Access' % (self.command_prefix)
+        cmd = '%s iwconfig 2>/dev/null | grep Access | grep -v Not-Associated' % (self.command_prefix)
         access_point_address = subprocess.check_output(cmd, shell=True)
         self.client.publish('/biscuit/Messages/DEBUG', access_point_address, qos=1, retain=True)
         access_point_address = access_point_address.decode('utf-8').split().pop()
