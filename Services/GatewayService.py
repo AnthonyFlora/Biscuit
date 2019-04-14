@@ -39,7 +39,7 @@ class GatewayService(Services.Service.Service):
             self.send_gateway_status()
 
     def send_gateway_status(self):
-        self.client.publish(self.gateway_status_topic, self.gateway_status.to_json(), qos=1, retain=True)
+        self.client.publish(self.gateway_status_topic, self.gateway_status.to_json(), qos=1)
 
     def get_access_point_address(self):
         cmd = '%s iwconfig 2>/dev/null | grep Access | grep -v Not-Associated' % (self.command_prefix)
