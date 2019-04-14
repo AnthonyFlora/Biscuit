@@ -5,6 +5,7 @@ import Messages.SystemUpdateRequest
 import Messages.ServiceStatus
 import time
 import sys
+import subprocess
 
 class GatewayService(Services.Service.Service):
     def __init__(self, gateway):
@@ -12,8 +13,12 @@ class GatewayService(Services.Service.Service):
         self.gateway_status = Messages.GatewayStatus.GatewayStatus()
         self.gateway_status.hostname = self.hostname
         self.gateway_status.gateway_name = gateway
+        self.gateway_status_topic = '/biscuit/Messages/GatewayStatus'
+        self.gateway_status.gateway_name = self.get_access_point_address()
+        self.send_gateway_status()
         self.setup_handler('/biscuit/Messages/GatewayRebootRequest', self.on_receive_gateway_reboot_request)
         self.setup_handler('/biscuit/Messages/GatewayStatusRequest', self.on_receive_gateway_status_request)
+
 
     def on_receive_gateway_reboot_request(self, message):
         m = Messages.GatewayRebootRequest.GatewayRebootRequest()
@@ -32,8 +37,15 @@ class GatewayService(Services.Service.Service):
             self.send_gateway_status()
 
     def send_gateway_status(self):
-        print(self.hostname, self.gateway_status.gateway_name, 'TODO send gateway status')
-        self.client.publish(self.status_topic, self.gateway_status.to_json(), qos=1, retain=True)
+        self.client.publish(self.gateway_status_topic, self.gateway_status.to_json(), qos=1, retain=True)
+
+    def get_access_point_address(self):
+        cmd = 'ssh %s iwconfig 2>/dev/null | grep Access' % (self.gateway_status.gateway_name)
+        access_point_address = subprocess.check_output(cmd, shell=True)
+        access_point_address = access_point_address.decode('utf-8').split().pop()
+        print(access_point_address)
+        return access_point_address
+
 
 if __name__ == '__main__':
     gateway = 'localhost'
