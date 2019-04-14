@@ -23,6 +23,10 @@ class Service:
         self.service_state.status = 'OFFLINE'
         self.client.will_set(self.service_status_topic, self.service_state.to_json(), qos=1, retain=True)
 
+    def setup_handler(self, topic, handler):
+        self.handlers[topic] = handler
+        self.client.subscribe(topic, qos=1)
+
     def connect_to_broker(self):
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_receive
@@ -32,7 +36,6 @@ class Service:
         self.set_service_status('OPERATIONAL')
 
     def on_receive(self, client, userdata, message):
-        print(message.topic)
         handler = self.handlers[message.topic]
         handler(message.payload.decode("utf-8"))
 

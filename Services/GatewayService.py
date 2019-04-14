@@ -15,8 +15,8 @@ class GatewayService(Services.Service.Service):
         self.gateway_status = Messages.GatewayStatus.GatewayStatus()
         self.gateway_status.hostname = self.hostname
         self.gateway_status.gateway_name = gateway
-        self.handlers['/biscuit/Messages/GatewayRebootRequest'] = self.on_receive_gateway_reboot_request
-        self.handlers['/biscuit/Messages/GatewayStatusRequest'] = self.on_receive_gateway_status_request
+        self.setup_handler('/biscuit/Messages/GatewayRebootRequest', self.on_receive_gateway_reboot_request)
+        self.setup_handler('/biscuit/Messages/GatewayStatusRequest', self.on_receive_gateway_status_request)
 
     def on_receive_gateway_reboot_request(self, message):
         m = Messages.GatewayRebootRequest.GatewayRebootRequest()

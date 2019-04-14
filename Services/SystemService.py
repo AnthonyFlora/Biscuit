@@ -7,8 +7,8 @@ import time
 class SystemService(Services.Service.Service):
     def __init__(self):
         Services.Service.Service.__init__(self, 'SystemService')
-        self.handlers['/biscuit/Messages/SystemRebootRequest'] = self.on_receive_system_reboot_request
-        self.handlers['/biscuit/Messages/SystemUpdateRequest'] = self.on_receive_system_update_request
+        self.setup_handler('/biscuit/Messages/SystemRebootRequest', self.on_receive_system_reboot_request)
+        self.setup_handler('/biscuit/Messages/SystemUpdateRequest', self.on_receive_system_update_request)
 
     def on_receive_system_reboot_request(self, message):
         m = Messages.SystemRebootRequest.SystemRebootRequest()
