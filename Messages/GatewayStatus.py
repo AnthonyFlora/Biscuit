@@ -1,6 +1,6 @@
 import json
-import collections
-import Messages.SurveyStatus.SurveyStatus
+#import collections
+#import Messages.SurveyStatus.SurveyStatus
 
 
 class GatewayStatus:
@@ -11,7 +11,7 @@ class GatewayStatus:
         self.status = ''
         self.last_update = ''
         self.utilization = ''
-        self.survey_status = collections.defaultdict(lambda: Messages.SurveyStatus.SurveyStatus())
+        #self.survey_status = collections.defaultdict(lambda: Messages.SurveyStatus.SurveyStatus())
 
     def from_dict(self, dict_data):
         self.hostname = dict_data['hostname']
@@ -20,8 +20,8 @@ class GatewayStatus:
         self.status = dict_data['status']
         self.last_update = dict_data['last_update']
         self.utilization = dict_data['utilization']
-        for k, v in dict_data['survey_status'].items():
-            self.survey_status[k].from_dict(v)
+        # for k, v in dict_data['survey_status'].items():
+        #     self.survey_status[k].from_dict(v)
 
     def from_json(self, json_data):
         dict_data = json.loads(json_data)
