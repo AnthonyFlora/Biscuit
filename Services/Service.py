@@ -53,6 +53,12 @@ class Service:
         self.service_state.last_update = str(datetime.datetime.now())
         self.client.publish(self.service_status_topic, self.service_state.to_json(), qos=1, retain=True)
 
+    def reboot(self):
+        self.set_service_status('SHUTTING DOWN')
+        self.client.loop_stop()
+        self.client.disconnect()
+        return subprocess.check_output('sudo reboot', shell=True)
+
 
 if __name__ == '__main__':
     while True:

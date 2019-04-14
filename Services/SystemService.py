@@ -14,10 +14,7 @@ class SystemService(Services.Service.Service):
         m = Messages.SystemRebootRequest.SystemRebootRequest()
         m.from_json(message.payload)
         if m.hostname == self.hostname:
-            self.set_service_status('SHUTTING DOWN')
-            self.client.loop_stop()
-            self.client.disconnect()
-            return subprocess.check_output('sudo reboot', shell=True)
+            self.reboot()
 
     def on_receive_system_update_request(self, message):
         m = Messages.SystemUpdateRequest.SystemUpdateRequest()
@@ -25,10 +22,7 @@ class SystemService(Services.Service.Service):
         if m.hostname == self.hostname:
             self.set_service_status('UPDATING')
             subprocess.check_output('git pull', shell=True)
-            self.set_service_status('SHUTTING DOWN')
-            self.client.loop_stop()
-            self.client.disconnect()
-            return subprocess.check_output('sudo reboot', shell=True)
+            self.reboot()
 
 
 if __name__ == '__main__':
