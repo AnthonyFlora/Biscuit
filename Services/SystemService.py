@@ -19,6 +19,7 @@ class SystemService(Services.Service.Service):
     def on_receive_system_update_request(self, message):
         m = Messages.SystemUpdateRequest.SystemUpdateRequest()
         m.from_json(message.payload)
+        self.set_service_status('Received myHost=%s msgHost=%s' % (self.hostname, m.hostname))
         if m.hostname == self.hostname:
             self.set_service_status('UPDATING')
             subprocess.check_output('git pull', shell=True)
