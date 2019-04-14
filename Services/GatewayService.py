@@ -51,13 +51,13 @@ class GatewayService(Services.Service.Service):
 
 
 if __name__ == '__main__':
-    command_prefix = None
+    arg_command_prefix = None
     if len(sys.argv) > 1:
-        gateway = sys.argv[1]
+        arg_command_prefix = sys.argv[1]
 
     while True:
         try:
-            component = GatewayService(command_prefix)
+            component = GatewayService(arg_command_prefix)
             component.run()
         except:
             print('Restarting GatewayService..')
