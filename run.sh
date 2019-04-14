@@ -11,7 +11,7 @@ fi
 
 if [ $HOST = "gateway" ]; then
   echo $HOST
-  python3 ${DIRECTORY}/Services/GatewayService.py localhost &
+  python3 ${DIRECTORY}/Services/GatewayService.py &
 fi
 
 if [ $HOST = "hyperion" ]; then
