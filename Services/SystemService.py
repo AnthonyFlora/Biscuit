@@ -3,6 +3,7 @@ import Messages.SystemRebootRequest
 import Messages.SystemUpdateRequest
 import subprocess
 import time
+import os
 
 class SystemService(Services.Service.Service):
     def __init__(self):
@@ -24,7 +25,8 @@ class SystemService(Services.Service.Service):
         m.from_json(message.payload)
         if m.hostname == self.hostname:
             self.set_service_status('UPDATING')
-            subprocess.check_output('git pull', shell=True)
+            dirname = os.path.dirname(os.path.realpath(__file__))
+            subprocess.check_output('cd %s; git pull' % dirname, shell=True)
             self.set_service_status('SHUTTING DOWN')
             self.client.loop_stop()
             self.client.disconnect()
