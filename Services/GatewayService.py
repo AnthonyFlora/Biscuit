@@ -20,7 +20,7 @@ class GatewayService(Services.Service.Service):
 
     def on_receive_gateway_reboot_request(self, message):
         m = Messages.GatewayRebootRequest.GatewayRebootRequest()
-        m.from_json(message.payload)
+        m.from_json(message)
         print(self.hostname, 'TODO gateway reboot request')
         # if m.hostname == self.hostname:
         #     self.set_service_status('SHUTTING DOWN')
@@ -30,7 +30,7 @@ class GatewayService(Services.Service.Service):
 
     def on_receive_gateway_status_request(self, message):
         m = Messages.GatewayStatusRequest.GatewayStatusRequest()
-        m.from_json(message.payload)
+        m.from_json(message)
         if m.hostname == self.hostname:
             self.send_gateway_status()
 
