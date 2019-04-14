@@ -46,7 +46,8 @@ class GatewayService(Services.Service.Service):
         cmd = '%s iwconfig 2>/dev/null | grep Access' % (self.command_prefix)
         access_point_address = subprocess.check_output(cmd, shell=True)
         access_point_address = access_point_address.decode('utf-8').split().pop()
-        print(access_point_address)
+        self.client.publish('/biscuit/Messages/DEBUG', cmd, qos=1, retain=True)
+        self.client.publish('/biscuit/Messages/DEBUG', access_point_address, qos=1, retain=True)
         return access_point_address
 
 
