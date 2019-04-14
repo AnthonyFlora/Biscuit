@@ -3,9 +3,6 @@ import Messages.GatewayStatus
 import Messages.SystemRebootRequest
 import Messages.SystemUpdateRequest
 import Messages.ServiceStatus
-import paho.mqtt.client as mqtt
-import datetime
-import subprocess
 import time
 import sys
 
