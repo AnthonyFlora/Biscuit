@@ -26,7 +26,6 @@ class GatewayService(Services.Service.Service):
     def on_receive_gateway_reboot_request(self, message):
         m = Messages.GatewayRebootRequest.GatewayRebootRequest()
         m.from_json(message)
-        print(self.hostname, 'TODO gateway reboot request')
         # if m.hostname == self.hostname:
         #     self.set_service_status('SHUTTING DOWN')
         #     self.client.loop_stop()
@@ -45,10 +44,7 @@ class GatewayService(Services.Service.Service):
     def get_access_point_address(self):
         cmd = '%s iwconfig 2>/dev/null | grep Access | grep -v Not-Associated' % (self.command_prefix)
         access_point_address = subprocess.check_output(cmd, shell=True)
-        self.client.publish('/biscuit/Messages/DEBUG', access_point_address, qos=1, retain=True)
         access_point_address = access_point_address.decode('utf-8').split().pop()
-        self.client.publish('/biscuit/Messages/DEBUG', cmd, qos=1, retain=True)
-        self.client.publish('/biscuit/Messages/DEBUG', access_point_address, qos=1, retain=True)
         return access_point_address
 
 
