@@ -26,7 +26,7 @@ class SystemService(Services.Service.Service):
         if m.hostname == self.hostname:
             self.set_service_status('UPDATING')
             dirname = os.path.dirname(os.path.realpath(__file__))
-            subprocess.check_output('cd %s; git pull' % dirname, shell=True)
+            subprocess.check_output('git pull' % dirname, shell=True)
             self.set_service_status('SHUTTING DOWN')
             self.client.loop_stop()
             self.client.disconnect()
