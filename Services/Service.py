@@ -30,6 +30,7 @@ class Service:
     def connect_to_broker(self):
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_receive
+        self.client.on_disconnect = self.on_disconnect
         self.client.connect('iot.eclipse.org', 1883)
 
     def on_connect(self, client, userdata, flags, rc):
@@ -40,7 +41,7 @@ class Service:
         handler(message.payload.decode("utf-8"))
 
     def on_disconnect(self, client, userdata, rc):
-        None
+        self.client.loop_stop()
 
     def on_receive_default(self, message):
         print('received default', message.topic)
