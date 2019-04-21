@@ -10,14 +10,14 @@ if [ $HOST = "Anthonys-MacBook-Pro" ]; then
 fi
 
 if [ $HOST = "gateway" ]; then
-  echo $HOST
   python3 ${DIRECTORY}/Services/GatewayService.py &
 fi
 
 if [ $HOST = "hyperion" ]; then
-  echo $HOST
   python3 ${DIRECTORY}/Services/GatewayService.py root@192.168.11.1 &
 fi
 
 python3 ${DIRECTORY}/Services/SystemService.py &
+python3 ${DIRECTORY}/Services/HeartbeatService.py &
+
 

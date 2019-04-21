@@ -39,6 +39,9 @@ class Service:
         handler = self.handlers[message.topic]
         handler(message.payload.decode("utf-8"))
 
+    def on_disconnect(self, client, userdata, rc):
+        None
+
     def on_receive_default(self, message):
         print('received default', message.topic)
 
