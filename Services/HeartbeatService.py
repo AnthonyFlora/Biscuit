@@ -6,7 +6,7 @@ class HeartbeatService(Services.Service.Service):
         Services.Service.Service.__init__(self, 'HeartbeatService')
 
     def run(self):
-        self.set_service_status('OPERATIONAL')
+        self.client.loop_start()
         while True:
             time.sleep(30)
             self.send_service_status()
