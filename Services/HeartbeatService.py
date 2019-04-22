@@ -7,7 +7,7 @@ class HeartbeatService(Services.Service.Service):
 
     def run(self):
         self.client.loop_start()
-        time.sleep(10.0)
+        time.sleep(30.0)
         while self.client.is_connected:
             self.send_service_status()
             time.sleep(10.0)
