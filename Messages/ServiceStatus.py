@@ -5,10 +5,12 @@ class ServiceStatus:
     def __init__(self):
         self.hostname = ''
         self.status = ''
+        self.version = ''
 
     def from_dict(self, dict_data):
         self.hostname = dict_data['hostname']
         self.status = dict_data['status']
+        self.version = dict_data['version']
 
     def from_json(self, json_data):
         dict_data = json.loads(json_data)

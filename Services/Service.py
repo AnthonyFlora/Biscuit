@@ -7,6 +7,7 @@ import subprocess
 import time
 import collections
 
+
 class Service:
     def __init__(self, service_name='Core'):
         self.hostname = self.get_hostname()
@@ -20,6 +21,7 @@ class Service:
         self.service_status_topic = '/biscuit/Statuses/' + self.hostname + '/' + self.service_name
         self.service_state = Messages.ServiceStatus.ServiceStatus()
         self.service_state.hostname = self.hostname
+        self.service_state.version = '20190421_2037'
         self.service_state.status = 'OFFLINE'
         self.client.will_set(self.service_status_topic, self.service_state.to_json(), qos=1, retain=True)
 
