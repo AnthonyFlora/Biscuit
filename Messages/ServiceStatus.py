@@ -17,5 +17,5 @@ class ServiceStatus:
         self.from_dict(dict_data)
 
     def to_json(self):
-        return json.dumps(self, default=lambda x: x.__dict__)
+        return json.dumps(self, default=lambda x: x.__dict__, sort_keys=True)
 
