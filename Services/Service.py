@@ -21,7 +21,7 @@ class Service:
         self.service_status_topic = '/biscuit/Statuses/' + self.hostname + '/' + self.service_name
         self.service_state = Messages.ServiceStatus.ServiceStatus()
         self.service_state.hostname = self.hostname
-        self.service_state.version = '20190422_0016'
+        self.service_state.version = '20190422_0805'
         self.service_state.status = 'OFFLINE'
         self.client.will_set(self.service_status_topic, self.service_state.to_json(), qos=1, retain=True)
 
@@ -34,7 +34,7 @@ class Service:
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_receive
         self.client.on_disconnect = self.on_disconnect
-        self.client.connect('iot.eclipse.org', 1883)
+        self.client.connect('broker.hivemq.com', 1883)
 
     def on_connect(self, client, userdata, flags, rc):
         if rc == 0:
