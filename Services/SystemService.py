@@ -31,5 +31,6 @@ if __name__ == '__main__':
             component = SystemService()
             component.run()
         except:
-            print('Restarting SystemService..')
-            time.sleep(10.0)
+            None
+        print('Restarting SystemService..')
+        time.sleep(10.0)

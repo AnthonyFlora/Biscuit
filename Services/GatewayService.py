@@ -61,5 +61,6 @@ if __name__ == '__main__':
             component = GatewayService(arg_command_prefix)
             component.run()
         except:
-            print('Restarting GatewayService..')
-            time.sleep(10.0)
+            None
+        print('Restarting GatewayService..')
+        time.sleep(10.0)

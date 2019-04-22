@@ -21,7 +21,7 @@ class Service:
         self.service_status_topic = '/biscuit/Statuses/' + self.hostname + '/' + self.service_name
         self.service_state = Messages.ServiceStatus.ServiceStatus()
         self.service_state.hostname = self.hostname
-        self.service_state.version = '20190421_2101'
+        self.service_state.version = '20190422_0011'
         self.service_state.status = 'OFFLINE'
         self.client.will_set(self.service_status_topic, self.service_state.to_json(), qos=1, retain=True)
 
@@ -30,20 +30,29 @@ class Service:
         self.client.subscribe(topic, qos=1)
 
     def connect_to_broker(self):
+        self.client.is_connected = False
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_receive
         self.client.on_disconnect = self.on_disconnect
         self.client.connect('iot.eclipse.org', 1883)
 
     def on_connect(self, client, userdata, flags, rc):
-        self.set_service_status('OPERATIONAL')
+        if rc == 0:
+            self.client.is_connected = True
+            self.set_service_status('OPERATIONAL')
+        else:
+            self.client.loop_stop()
+            raise Exception('MQTT Connection Failed')
+
+    def on_disconnect(self, client, userdata, rc):
+        print('Disconnected')
+        self.client.is_connected = False
+        self.client.disconnect()
+        self.client.loop_stop()
 
     def on_receive(self, client, userdata, message):
         handler = self.handlers[message.topic]
         handler(message.payload.decode("utf-8"))
-
-    def on_disconnect(self, client, userdata, rc):
-        self.client.loop_stop()
 
     def on_receive_default(self, message):
         print('received default', message.topic)
@@ -60,7 +69,10 @@ class Service:
 
     def send_service_status(self):
         self.service_state.last_update = str(datetime.datetime.now())
-        self.client.publish(self.service_status_topic, self.service_state.to_json(), qos=1, retain=True)
+        ret = self.client.publish(self.service_status_topic, self.service_state.to_json(), qos=1, retain=True)
+        if ret.rc != 0:  # TODO this should be in a general send, not just status, is it needed though, will disc be detect?
+            print('Could not publish')
+            self.client.disconnect()
 
     def reboot(self):
         self.set_service_status('SHUTTING DOWN')

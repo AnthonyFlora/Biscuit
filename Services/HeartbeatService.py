@@ -7,9 +7,10 @@ class HeartbeatService(Services.Service.Service):
 
     def run(self):
         self.client.loop_start()
-        while True:
-            time.sleep(60.0)
+        time.sleep(10.0)
+        while self.client.is_connected:
             self.send_service_status()
+            time.sleep(10.0)
 
 
 if __name__ == '__main__':
@@ -18,5 +19,6 @@ if __name__ == '__main__':
             component = HeartbeatService()
             component.run()
         except:
-            print('Restarting HeartbeatService..')
-            time.sleep(10.0)
+            None
+        print('Restarting HeartbeatService..')
+        time.sleep(10.0)
