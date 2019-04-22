@@ -34,7 +34,7 @@ class Service:
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_receive
         self.client.on_disconnect = self.on_disconnect
-        self.client.connect('broker.hivemq.com', 1883)
+        self.client.connect('broker.hivemq.com', 1883) # TODO move to config
 
     def on_connect(self, client, userdata, flags, rc):
         if rc == 0:
