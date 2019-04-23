@@ -1,7 +1,7 @@
 import json
 
 
-class SystemRebootRequest:
+class GatewayStatusRequest:
     def __init__(self):
         self.hostname = ''
 
