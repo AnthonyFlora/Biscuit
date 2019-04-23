@@ -1,5 +1,6 @@
 import Services.Service
 import Messages.GatewayStatus
+import Messages.GatewayStatusRequest
 import Messages.SystemRebootRequest
 import Messages.SystemUpdateRequest
 import Messages.ServiceStatus
