@@ -36,8 +36,8 @@ class GatewayService(Services.Service.Service):
     def on_receive_gateway_status_request(self, message):
         m = Messages.GatewayStatusRequest.GatewayStatusRequest()
         m.from_json(message)
-        #if m.hostname == self.hostname:
-        self.send_gateway_status()
+        if m.hostname == self.hostname:
+            self.send_gateway_status()
 
     def send_gateway_status(self):
         self.client.publish(self.gateway_status_topic, self.gateway_status.to_json(), qos=1)
