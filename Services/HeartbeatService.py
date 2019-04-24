@@ -1,4 +1,5 @@
 import Services.Service
+import datetime
 import time
 
 class HeartbeatService(Services.Service.Service):
@@ -21,5 +22,5 @@ if __name__ == '__main__':
             component.run()
         except:
             None
-        print('Restarting HeartbeatService..')
+        print(str(datetime.datetime.now()), 'Restarting HeartbeatService..')
         time.sleep(10.0)

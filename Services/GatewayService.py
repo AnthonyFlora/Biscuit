@@ -4,6 +4,7 @@ import Messages.GatewayStatusRequest
 import Messages.SystemRebootRequest
 import Messages.SystemUpdateRequest
 import Messages.ServiceStatus
+import datetime
 import time
 import sys
 import subprocess
@@ -63,5 +64,5 @@ if __name__ == '__main__':
             component.run()
         except:
             None
-        print('Restarting GatewayService..')
+        print(str(datetime.datetime.now()), 'Restarting GatewayService..')
         time.sleep(10.0)

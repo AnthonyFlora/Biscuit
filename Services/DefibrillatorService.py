@@ -1,5 +1,6 @@
 import Services.Service
 import collections
+import datetime
 import time
 
 class DefibrillatorService(Services.Service.Service):
@@ -25,5 +26,5 @@ if __name__ == '__main__':
         if start_times[fail_thresh - 1] - start_times[0]  < retry_sleep * (fail_thresh + .5):
             component = DefibrillatorService()
             component.reboot()
-        print('Restarting HeartbeatService..')
+        print(str(datetime.datetime.now()), 'Restarting HeartbeatService..')
         time.sleep(retry_sleep)
