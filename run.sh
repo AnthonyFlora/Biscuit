@@ -11,6 +11,7 @@ fi
 
 if [ $HOST = "gateway" ]; then
   python3 ${DIRECTORY}/Services/GatewayService.py &
+  python3 ${DIRECTORY}/Services/DeadmanSwitchService.py &
 fi
 
 if [ $HOST = "hyperion" ]; then
