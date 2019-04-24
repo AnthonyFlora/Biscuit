@@ -2,9 +2,9 @@ import Services.Service
 import collections
 import time
 
-class DeadmanSwitchService(Services.Service.Service):
+class DefibrillatorService(Services.Service.Service):
     def __init__(self):
-        Services.Service.Service.__init__(self, 'DeadmanSwitchService')
+        Services.Service.Service.__init__(self, 'DefibrillatorService')
 
 
 if __name__ == '__main__':
@@ -18,12 +18,12 @@ if __name__ == '__main__':
     while True:
         start_times.append(time.time())
         try:
-            component = DeadmanSwitchService()
+            component = DefibrillatorService()
             component.run()
         except:
             None
         if start_times[fail_thresh - 1] - start_times[0]  < retry_sleep * (fail_thresh + .5):
-            component = DeadmanSwitchService()
+            component = DefibrillatorService()
             component.reboot()
         print('Restarting HeartbeatService..')
         time.sleep(retry_sleep)
