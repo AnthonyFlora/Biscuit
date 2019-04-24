@@ -21,7 +21,7 @@ class Service:
         self.service_status_topic = '/biscuit/Statuses/' + self.hostname + '/' + self.service_name
         self.service_state = Messages.ServiceStatus.ServiceStatus()
         self.service_state.hostname = self.hostname
-        self.service_state.version = '20190423_1110p'
+        self.service_state.version = '20190423_1113p'
         self.service_state.status = 'OFFLINE'
         self.client.will_set(self.service_status_topic, self.service_state.to_json(), qos=1, retain=True)
 

@@ -6,7 +6,7 @@ def on_receive(client, userdata, message):
 
 if __name__ == '__main__':
     client = mqtt.Client()
-    client.connect('iot.eclipse.org', 1883)
+    client.connect('broker.hivemq.com', 1883)
     client.on_message = on_receive
     client.subscribe('/biscuit/#')
     client.loop_forever()
