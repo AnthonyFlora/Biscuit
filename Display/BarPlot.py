@@ -1,9 +1,9 @@
 import tkinter as tk
 
-class BoxPlot(tk.Frame):
+class BarPlot(tk.Frame):
     def __init__(self, parent=None, num_rows=10, num_cols=10):
         tk.Frame.__init__(self, parent)
-        self.canvas = tk.Canvas(self, background='gray')
+        self.canvas = tk.Canvas(self, background='black')
         self.canvas.bind('<Configure>', self.on_resize)
         self.canvas.grid(sticky='news')
         self.canvas.pack(fill='both', expand=1)
@@ -12,22 +12,23 @@ class BoxPlot(tk.Frame):
         self.num_rows = num_rows
         self.is_stale_size = False
         self.pack(fill='both', expand=1)
+        self.set_data_all('black')
 
     def on_resize(self, event):
         self.is_stale_size = True
         self.replot()
 
-    def set_cell_color(self, row, col, color):
-        self.canvas.itemconfig(self.boxes[row][col], fill=color)
+    def set_cell_weight(self, row, col, color):
+        #self.canvas.itemconfig(self.boxes[row][col], fill=color)
         self.after_idle(self.replot)
 
     def set_row_color(self, row, color):
         [self.canvas.itemconfig(self.boxes[row][col], fill=color) for col in range(self.num_cols)]
 
-    def set_col_color(self, col, color):
+    def set_data_col(self, col, color):
         [self.canvas.itemconfig(self.boxes[row][col], fill=color) for row in range(self.num_rows)]
 
-    def set_all_color(self, color):
+    def set_data_all(self, color):
         [self.set_data_col(col, color) for col in range(self.num_cols)]
 
     def replot(self):
@@ -47,6 +48,6 @@ if __name__ == '__main__':
     print('hello')
     root = tk.Tk()
     plot = BoxPlot(root, 20, 40)
-    plot.set_row_color(3, 'red')
-    plot.set_col_color(6, 'green')
+    plot.set_data_row(3, 'red')
+    plot.set_data_col(6, 'green')
     tk.mainloop()
