@@ -21,7 +21,8 @@ class Service:
         self.service_status_topic = '/biscuit/Statuses/' + self.hostname + '/' + self.service_name
         self.service_state = Messages.ServiceStatus.ServiceStatus()
         self.service_state.hostname = self.hostname
-        self.service_state.version = '20190424_0703p'
+        self.service_state.service = self.service_name
+        self.service_state.version = '20190506_0814p'
         self.service_state.status = 'OFFLINE'
         self.client.will_set(self.service_status_topic, self.service_state.to_json(), qos=1, retain=True)
 
@@ -53,9 +54,14 @@ class Service:
     def on_receive(self, client, userdata, message):
         handler = self.handlers[message.topic]
         handler(message.payload.decode("utf-8"))
+        for topic,handler in self.handlers.items():
+            if '#' in topic:
+                wild_topic = topic.replace('#', '')
+                if wild_topic in message.topic:
+                    handler(message.payload.decode("utf-8"))
 
     def on_receive_default(self, message):
-        print('received default', message.topic)
+        None
 
     def run(self):
         self.client.loop_forever()

@@ -4,11 +4,13 @@ import json
 class ServiceStatus:
     def __init__(self):
         self.hostname = ''
+        self.service = ''
         self.status = ''
         self.version = ''
 
     def from_dict(self, dict_data):
         self.hostname = dict_data['hostname']
+        self.service = dict_data['service']
         self.status = dict_data['status']
         self.version = dict_data['version']
 
