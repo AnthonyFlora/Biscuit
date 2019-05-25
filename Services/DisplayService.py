@@ -44,7 +44,7 @@ class ServiceStatusFrame(tk.Frame):
             frame.grid(row=0, column=icol)
             for irow in range(len(hosts)):
                 host = hosts[irow]
-                self.labels[host][service] = tk.Label(frame, text='????')
+                self.labels[host][service] = tk.Label(frame, text='OFFLINE')
                 self.labels[host][service].grid(row=irow, column=icol)
 
 
