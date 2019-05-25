@@ -21,7 +21,9 @@ class DisplayService(Services.Service.Service):
         host = m.hostname
         service = m.service
         status = m.status
+        version = m.version
         self.gui.queue_callback(functools.partial(gui.update_service_status, host, service, status))
+        self.gui.queue_callback(functools.partial(gui.update_service_version, host, version))
 
 
 class HostNameFrame(tk.LabelFrame):
@@ -31,6 +33,15 @@ class HostNameFrame(tk.LabelFrame):
         for irow in range(len(hosts)):
             host = hosts[irow]
             self.labels[host] = tk.Label(self, text=host)
+            self.labels[host].grid(row=irow, column=0)
+
+class ServiceVersionFrame(tk.LabelFrame):
+    def __init__(self, parent, hosts):
+        tk.LabelFrame.__init__(self, parent, text=' Version ')
+        self.labels = collections.defaultdict(lambda: tk.Label(self))
+        for irow in range(len(hosts)):
+            host = hosts[irow]
+            self.labels[host] = tk.Label(self, text='????')
             self.labels[host].grid(row=irow, column=0)
 
 
@@ -63,8 +74,10 @@ class DisplayGUI(tk.Frame):
         tk.Frame.__init__(self, parent)
 
         HostNameFrame(self, hosts).grid(row=0, column=0)
+        self.service_version_frame = ServiceVersionFrame(self, hosts)
+        self.service_version_frame.grid(row=0, column=1)
         self.service_status_frame = ServiceStatusFrame(self, hosts, services)
-        self.service_status_frame.grid(row=0, column=1)
+        self.service_status_frame.grid(row=0, column=2)
 
         HostNameFrame(self, hosts).grid(row=1, column=0)
         self.gateway_essid_frame = GatewayEssidFrame(self, hosts)
@@ -76,6 +89,9 @@ class DisplayGUI(tk.Frame):
 
     def update_service_status(self, host, service, status):
         self.service_status_frame.labels[host][service]['text'] = status
+
+    def update_service_version(self, host, version):
+        self.service_version_frame.labels[host]['text'] = version
 
     def queue_callback(self, callback):
         self.callbacks.put(callback)
