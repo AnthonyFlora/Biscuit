@@ -1,59 +1,116 @@
 import Services.Service
 import collections
-from Common import Observable
 import datetime
 import time
 import tkinter as tk
 from Config.Config import *
 import threading
 import Messages.ServiceStatus
+import functools
+import queue
 
 class DisplayService(Services.Service.Service):
-    def __init__(self, model):
+    def __init__(self, gui):
         Services.Service.Service.__init__(self, 'DisplayService')
-        self.model = model
+        self.gui = gui
         self.setup_handler('/biscuit/Statuses/#', self.on_receive_service_status)
 
     def on_receive_service_status(self, message):
         m = Messages.ServiceStatus.ServiceStatus()
         m.from_json(message)
-        self.model.state['service_statuses'].data[m.hostname + ':' + m.service] = m
-        self.model.state['service_statuses'].notify()
-        print(m.model.state['service_statuses'])
+        host = m.hostname
+        service = m.service
+        status = m.status
+        self.gui.queue_callback(functools.partial(gui.update_service_status, host, service, status))
 
-class DisplayModel():
-    def __init__(self):
-        self.state = collections.defaultdict(lambda: Observable.Observable())
-        self.state['service_statuses'].update(collections.defaultdict(lambda: ''))
+
+class HostNameFrame(tk.LabelFrame):
+    def __init__(self, parent, hosts):
+        tk.LabelFrame.__init__(self, parent, text=' Host ')
+        self.labels = collections.defaultdict(lambda: tk.Label(self))
+        for irow in range(len(hosts)):
+            host = hosts[irow]
+            self.labels[host] = tk.Label(self, text=host)
+            self.labels[host].grid(row=irow, column=0)
+
+
+class ServiceStatusFrame(tk.Frame):
+    def __init__(self, parent, hosts, services):
+        tk.Frame.__init__(self, parent)
+        self.labels = collections.defaultdict(lambda: collections.defaultdict(lambda: tk.Label(self)))
+        for icol in range(len(services)):
+            service = services[icol]
+            frame = tk.LabelFrame(self, text=' ' + service + ' ')
+            frame.grid(row=0, column=icol)
+            for irow in range(len(hosts)):
+                host = hosts[irow]
+                self.labels[host][service] = tk.Label(frame, text='????')
+                self.labels[host][service].grid(row=irow, column=icol)
+
+
+class GatewayEssidFrame(tk.LabelFrame):
+    def __init__(self, parent, hosts):
+        tk.LabelFrame.__init__(self, parent, text=' ESSID ')
+        self.labels = collections.defaultdict(lambda: tk.Label(self))
+        for irow in range(len(hosts)):
+            host = hosts[irow]
+            self.labels[host] = tk.Label(self, text='????')
+            self.labels[host].grid(row=irow, column=0)
+
 
 class DisplayGUI(tk.Frame):
-    def __init__(self, parent, model):
-        tk.Frame.__init__(self, parent, background=GUI_BACKGROUND)
-        self.label = tk.Label(self, text='hiii')
-        self.label.pack()
-        self.pack()
-        self.model = model
-        self.model.state['service_statuses'].observe(self.update_service_status)
+    def __init__(self, parent, hosts, services):
+        tk.Frame.__init__(self, parent)
 
-    def update_service_status(self, text):
-        self.label['text'] = text
-        for k,v in self.model.state['service_statuses'].data.items():
-            print(v.hostname + ' : ' + v.service  + ' --> ' + v.status + ' @ ' + v.version)
+        HostNameFrame(self, hosts).grid(row=0, column=0)
+        self.service_status_frame = ServiceStatusFrame(self, hosts, services)
+        self.service_status_frame.grid(row=0, column=1)
+
+        HostNameFrame(self, hosts).grid(row=1, column=0)
+        self.gateway_essid_frame = GatewayEssidFrame(self, hosts)
+        self.gateway_essid_frame.grid(row=1, column=1)
+        self.callbacks = queue.Queue()
+        self.process_callbacks()
+
+        self.pack(padx=5, pady=5)
+
+    def update_service_status(self, host, service, status):
+        self.service_status_frame.labels[host][service]['text'] = status
+
+    def queue_callback(self, callback):
+        self.callbacks.put(callback)
+
+    def process_callbacks(self):
+        while not self.callbacks.empty():
+            callback = self.callbacks.get()
+            callback()
+        self.after(10, self.process_callbacks)
 
 
-def component_thread(model):
-    while True:
+def component_thread(gui):
+    while True: # TODO dont restart if GUI closed
         try:
-            DisplayService(model).run()
+            DisplayService(gui).run()
         except:
             None
         print(str(datetime.datetime.now()), 'Restarting DisplayService..')
         time.sleep(10.0)
 
 
-if __name__ == '__main__':
-    model = DisplayModel()
-    gui = DisplayGUI(tk.Tk(), model)
-    threading.Thread(target=component_thread, args=(model,)).start()
+if __name__== '__main__':
+
+    hosts = []
+    hosts.append('hyperion')
+    hosts.append('gateway')
+
+    services = []
+    services.append('DefibrillatorService')
+    services.append('DisplayService')
+    services.append('GatewayService')
+    services.append('HeartbeatService')
+    services.append('SystemService')
+
+    gui = DisplayGUI(tk.Tk(), hosts, services)
+    threading.Thread(target=component_thread, args=(gui,)).start()
     tk.mainloop()
 

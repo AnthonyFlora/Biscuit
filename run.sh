@@ -15,7 +15,7 @@ if [ $HOST = "gateway" ]; then
 fi
 
 if [ $HOST = "hyperion" ]; then
-  python3 ${DIRECTORY}/Biscuit.py &
+  python3 ${DIRECTORY}/Services/DisplayService.py root@192.168.11.1 &
   python3 ${DIRECTORY}/Services/GatewayService.py root@192.168.11.1 &
 fi
 

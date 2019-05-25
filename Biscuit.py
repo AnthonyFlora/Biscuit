@@ -10,7 +10,6 @@ def value_to_color(value):
     b = s
     return '#%02x%02x%02x' % (r,g,b)
 
-
 class GatewayModel():
     def __init__(self):
         self.gateway = ''
@@ -25,49 +24,43 @@ class Controller():
     def __init__(self, model):
         self.model = model
 
-class GatewayControlFrame(tk.Frame):
-    def __init__(self, parent, model):
-        tk.Frame.__init__(self, parent)
-        self.model = model
-        self.pack()
-        frame = tk.LabelFrame(text=' Gateway Control ')
-        frame.pack(padx=10, pady=10)
 
-        b = BoxPlot(frame, 1, 50)
+class GatewayStatusFrame(tk.Label):
+    def __init__(self, parent, model):
+        tk.Label.__init__(self, parent)
+        self.model = model
+        self.name_frame = tk.LabelFrame(self, text=' Gateway ')
+        self.name_frame.grid(row=0, column=0)
+        self.labels = collections.defaultdict(lambda: tk.Label(self, text='???'))
+        self.labels['0'].grid(row=0, column=0)
+        self.labels['1'].grid(row=1, column=0)
+        self.labels['2'].grid(row=2, column=0)
+        self.labels['3'].grid(row=3, column=0)
+
+
+class GatewayControlFrame(tk.LabelFrame):
+    def __init__(self, parent, model):
+        tk.LabelFrame.__init__(self, parent, text=' Control ')
+        self.model = model
+
+        b = BoxPlot(self, 1, 50)
         b.grid(row=0, column=2)
         [b.set_cell_color(0, c, value_to_color(c/b.num_cols)) for c in range(b.num_cols)]
-        BoxPlot(frame, 1, 50).grid(row=1, column=2)
-        BoxPlot(frame, 1, 50).grid(row=2, column=2)
-        BoxPlot(frame, 1, 50).grid(row=3, column=2)
+        BoxPlot(self, 1, 50).grid(row=1, column=2)
+        BoxPlot(self, 1, 50).grid(row=2, column=2)
+        BoxPlot(self, 1, 50).grid(row=3, column=2)
 
-class SpeedTestFrame(tk.Frame):
-    def __init__(self, parent, model):
-        tk.Frame.__init__(self, parent)
-        self.model = model
-        self.pack()
-        frame = tk.LabelFrame(text=' Bandwidth ')
-        frame.pack(padx=10, pady=10)
-
-        # self.gateway = collections.defaultdict(lambda: {})
-        # tk.Label(frame, text='hello').grid(row=0, column=0)
-        # tk.Label(frame, text='helloxxxxxx').grid(row=3, column=1)
-
-        b = BoxPlot(frame, 1, 50)
-        b.grid(row=0, column=2)
-        [b.set_cell_color(0, c, value_to_color(c/b.num_cols)) for c in range(b.num_cols)]
-        BoxPlot(frame, 1, 50).grid(row=1, column=2)
-        BoxPlot(frame, 1, 50).grid(row=2, column=2)
-        BoxPlot(frame, 1, 50).grid(row=3, column=2)
 
 if __name__ == '__main__':
     print('hello')
     model = Model()
+    model.gateways['hyperion']
+    model.gateways['gateway']
 
     controller = Controller(model)
 
     root = tk.Tk()
-
-    GatewayControlFrame(root, model)
-    SpeedTestFrame(root, model)
+    GatewayStatusFrame(root, model).grid(row=0, column=0, padx=5, pady=5)
+    GatewayControlFrame(root, model).grid(row=0, column=1, padx=5, pady=5)
 
     tk.mainloop()

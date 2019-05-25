@@ -19,7 +19,7 @@ class GatewayService(Services.Service.Service):
         self.gateway_status.hostname = self.hostname
         self.gateway_status.gateway_name = command_prefix
         self.gateway_status_topic = '/biscuit/Messages/GatewayStatus'
-        self.gateway_status.access_point_address = self.get_access_point_address()
+        self.update_gateway_status()
         self.send_gateway_status()
         self.setup_handler('/biscuit/Messages/GatewayRebootRequest', self.on_receive_gateway_reboot_request)
         self.setup_handler('/biscuit/Messages/GatewayStatusRequest', self.on_receive_gateway_status_request)
@@ -38,13 +38,14 @@ class GatewayService(Services.Service.Service):
         m = Messages.GatewayStatusRequest.GatewayStatusRequest()
         m.from_json(message)
         if m.hostname == self.hostname:
+            self.update_gateway_status()
             self.send_gateway_status()
 
     def send_gateway_status(self):
         self.client.publish(self.gateway_status_topic, self.gateway_status.to_json(), qos=1)
 
     def update_gateway_status(self):
-        None
+        self.gateway_status.access_point_address = self.get_access_point_address()
 
     def get_access_point_address(self):
         cmd = '%s iwconfig 2>/dev/null | grep Access | grep -v Not-Associated' % (self.command_prefix)
