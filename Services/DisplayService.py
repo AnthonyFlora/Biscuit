@@ -51,7 +51,7 @@ class HostNameFrame(tk.LabelFrame):
         for irow in range(len(hosts)):
             host = hosts[irow]
             self.labels[host]['text'] = host
-            self.labels[host].grid(row=irow, column=0)
+            self.labels[host].grid(row=irow, column=0, sticky='news')
 
 class ServiceVersionFrame(tk.LabelFrame):
     def __init__(self, parent, hosts):
@@ -59,7 +59,7 @@ class ServiceVersionFrame(tk.LabelFrame):
         self.labels = collections.defaultdict(lambda: tk.Label(self, text='????'))
         for irow in range(len(hosts)):
             host = hosts[irow]
-            self.labels[host].grid(row=irow, column=0)
+            self.labels[host].grid(row=irow, column=0, sticky='news')
 
 
 class ServiceStatusFrame(tk.Frame):
@@ -69,11 +69,11 @@ class ServiceStatusFrame(tk.Frame):
         for icol in range(len(services)):
             service = services[icol]
             frame = tk.LabelFrame(self, text=' ' + service + ' ')
-            frame.grid(row=0, column=icol)
+            frame.grid(row=0, column=icol, sticky='news')
             for irow in range(len(hosts)):
                 host = hosts[irow]
                 self.labels[host][service] = tk.Label(frame, text='OFFLINE')
-                self.labels[host][service].grid(row=irow, column=icol)
+                self.labels[host][service].grid(row=irow, column=icol, sticky='news')
 
 
 class GatewayAddressFrame(tk.LabelFrame):
@@ -82,7 +82,7 @@ class GatewayAddressFrame(tk.LabelFrame):
         self.labels = collections.defaultdict(lambda: tk.Label(self, text='????'))
         for irow in range(len(hosts)):
             host = hosts[irow]
-            self.labels[host].grid(row=irow, column=0)
+            self.labels[host].grid(row=irow, column=0, sticky='news')
 
 
 class GatewaySpeedtestFrame(tk.LabelFrame):
