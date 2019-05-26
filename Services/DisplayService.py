@@ -104,9 +104,12 @@ class DisplayGUI(tk.Frame):
         self.service_status_frame = ServiceStatusFrame(self, hosts, services)
         self.service_status_frame.grid(row=0, column=2, sticky='news')
 
-        HostNameFrame(self, hosts).grid(row=1, column=0, sticky='news')
+        self.gateway_hostname_frame = HostNameFrame(self, hosts)
+        self.gateway_hostname_frame.grid(row=1, column=0, sticky='news')
+        self.gateway_hostname_frame.rowconfigure(0, weight=1)
         self.gateway_address_frame = GatewayAddressFrame(self, hosts)
         self.gateway_address_frame.grid(row=1, column=1, sticky='news')
+        self.gateway_address_frame.rowconfigure(0, weight=1)
         self.gateway_speedtest_frame = GatewaySpeedtestFrame(self, hosts)
         self.gateway_speedtest_frame.grid(row=1, column=2, sticky='news')
         self.gateway_speedtest_frame.columnconfigure(0, weight=1)
