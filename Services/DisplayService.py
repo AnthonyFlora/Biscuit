@@ -3,8 +3,10 @@ import collections
 import datetime
 import time
 import tkinter as tk
-from Config.Config import *
 import threading
+import Display.BoxPlot
+import Messages.GatewayStatus
+import Messages.GatewayStatusRequest
 import Messages.ServiceStatus
 import functools
 import queue
@@ -13,7 +15,9 @@ class DisplayService(Services.Service.Service):
     def __init__(self, gui):
         Services.Service.Service.__init__(self, 'DisplayService')
         self.gui = gui
+        self.hosts = hosts
         self.setup_handler('/biscuit/Statuses/#', self.on_receive_service_status)
+        self.setup_handler('/biscuit/Messages/GatewayStatus', self.on_receive_gateway_status)
 
     def on_receive_service_status(self, message):
         m = Messages.ServiceStatus.ServiceStatus()
@@ -24,31 +28,44 @@ class DisplayService(Services.Service.Service):
         version = m.version
         self.gui.queue_callback(functools.partial(gui.update_service_status, host, service, status))
         self.gui.queue_callback(functools.partial(gui.update_service_version, host, version))
+        if service == 'GatewayService':
+            self.request_gateway_status(host)
+
+    def on_receive_gateway_status(self, message):
+        m = Messages.GatewayStatus.GatewayStatus()
+        m.from_json(message)
+        host = m.hostname
+        address = m.access_point_address
+        self.gui.queue_callback(functools.partial(gui.update_gateway_address, host, address))
+
+    def request_gateway_status(self, host):
+        m = Messages.GatewayStatusRequest.GatewayStatusRequest()
+        m.hostname = host
+        self.client.publish('/biscuit/Messages/GatewayStatusRequest', m.to_json(), qos=1)
 
 
 class HostNameFrame(tk.LabelFrame):
     def __init__(self, parent, hosts):
         tk.LabelFrame.__init__(self, parent, text=' Host ')
-        self.labels = collections.defaultdict(lambda: tk.Label(self))
+        self.labels = collections.defaultdict(lambda: tk.Label(self, text='????'))
         for irow in range(len(hosts)):
             host = hosts[irow]
-            self.labels[host] = tk.Label(self, text=host)
+            self.labels[host]['text'] = host
             self.labels[host].grid(row=irow, column=0)
 
 class ServiceVersionFrame(tk.LabelFrame):
     def __init__(self, parent, hosts):
         tk.LabelFrame.__init__(self, parent, text=' Version ')
-        self.labels = collections.defaultdict(lambda: tk.Label(self))
+        self.labels = collections.defaultdict(lambda: tk.Label(self, text='????'))
         for irow in range(len(hosts)):
             host = hosts[irow]
-            self.labels[host] = tk.Label(self, text='????')
             self.labels[host].grid(row=irow, column=0)
 
 
 class ServiceStatusFrame(tk.Frame):
     def __init__(self, parent, hosts, services):
         tk.Frame.__init__(self, parent)
-        self.labels = collections.defaultdict(lambda: collections.defaultdict(lambda: tk.Label(self)))
+        self.labels = collections.defaultdict(lambda: collections.defaultdict(lambda: tk.Label(self, text='????')))
         for icol in range(len(services)):
             service = services[icol]
             frame = tk.LabelFrame(self, text=' ' + service + ' ')
@@ -59,29 +76,40 @@ class ServiceStatusFrame(tk.Frame):
                 self.labels[host][service].grid(row=irow, column=icol)
 
 
-class GatewayEssidFrame(tk.LabelFrame):
+class GatewayAddressFrame(tk.LabelFrame):
     def __init__(self, parent, hosts):
-        tk.LabelFrame.__init__(self, parent, text=' ESSID ')
-        self.labels = collections.defaultdict(lambda: tk.Label(self))
+        tk.LabelFrame.__init__(self, parent, text=' Address ')
+        self.labels = collections.defaultdict(lambda: tk.Label(self, text='????'))
         for irow in range(len(hosts)):
             host = hosts[irow]
-            self.labels[host] = tk.Label(self, text='????')
             self.labels[host].grid(row=irow, column=0)
+
+
+class GatewaySpeedtestFrame(tk.LabelFrame):
+    def __init__(self, parent, hosts):
+        tk.LabelFrame.__init__(self, parent, text=' Speedtest ')
+        self.plot = collections.defaultdict(lambda: Display.BoxPlot.BoxPlot(self, 1, 50))
+        for irow in range(len(hosts)):
+            host = hosts[irow]
+            self.plot[host].grid(row=irow, column=0, stick='news')
 
 
 class DisplayGUI(tk.Frame):
     def __init__(self, parent, hosts, services):
         tk.Frame.__init__(self, parent)
 
-        HostNameFrame(self, hosts).grid(row=0, column=0)
+        HostNameFrame(self, hosts).grid(row=0, column=0, sticky='news')
         self.service_version_frame = ServiceVersionFrame(self, hosts)
-        self.service_version_frame.grid(row=0, column=1)
+        self.service_version_frame.grid(row=0, column=1, sticky='news')
         self.service_status_frame = ServiceStatusFrame(self, hosts, services)
-        self.service_status_frame.grid(row=0, column=2)
+        self.service_status_frame.grid(row=0, column=2, sticky='news')
 
-        HostNameFrame(self, hosts).grid(row=1, column=0)
-        self.gateway_essid_frame = GatewayEssidFrame(self, hosts)
-        self.gateway_essid_frame.grid(row=1, column=1)
+        HostNameFrame(self, hosts).grid(row=1, column=0, sticky='news')
+        self.gateway_address_frame = GatewayAddressFrame(self, hosts)
+        self.gateway_address_frame.grid(row=1, column=1, sticky='news')
+        self.gateway_speedtest_frame = GatewaySpeedtestFrame(self, hosts)
+        self.gateway_speedtest_frame.grid(row=1, column=2, sticky='news')
+
         self.callbacks = queue.Queue()
         self.process_callbacks()
 
@@ -92,6 +120,9 @@ class DisplayGUI(tk.Frame):
 
     def update_service_version(self, host, version):
         self.service_version_frame.labels[host]['text'] = version
+
+    def update_gateway_address(self, host, address):
+        self.gateway_address_frame.labels[host]['text'] = address
 
     def queue_callback(self, callback):
         self.callbacks.put(callback)
