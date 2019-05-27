@@ -85,9 +85,9 @@ class GatewayAddressFrame(tk.LabelFrame):
             self.labels[host].grid(row=irow, column=0, sticky='news')
 
 
-class GatewaySpeedtestFrame(tk.LabelFrame):
+class GatewayBenchmarkFrame(tk.LabelFrame):
     def __init__(self, parent, hosts):
-        tk.LabelFrame.__init__(self, parent, text=' Speedtest ')
+        tk.LabelFrame.__init__(self, parent, text=' Benchmark ')
         self.plot = collections.defaultdict(lambda: Display.BoxPlot.BoxPlot(self, 1, 50))
         for irow in range(len(hosts)):
             host = hosts[irow]
@@ -102,12 +102,14 @@ class DisplayGUI(tk.Frame):
         self.service_version_frame = ServiceVersionFrame(self, hosts)
         self.service_version_frame.grid(row=0, column=1, sticky='news')
         self.service_status_frame = ServiceStatusFrame(self, hosts, services)
-        self.service_status_frame.grid(row=0, column=2, sticky='news')
+        self.service_status_frame.grid(row=0, column=2, sticky='news', columnspan=5)
 
         self.gateway_hostname_frame = HostNameFrame(self, hosts)
         self.gateway_hostname_frame.grid(row=1, column=0, sticky='news')
         self.gateway_address_frame = GatewayAddressFrame(self, hosts)
         self.gateway_address_frame.grid(row=1, column=1, sticky='news')
+        self.gateway_benchmark_frame = GatewayBenchmarkFrame(self, hosts)
+        self.gateway_benchmark_frame.grid(row=1, column=2, sticky='news', columnspan=5)
 
         self.callbacks = queue.Queue()
         self.process_callbacks()
@@ -148,6 +150,9 @@ if __name__== '__main__':
     hosts = []
     hosts.append('hyperion')
     hosts.append('gateway')
+    hosts.append('gateway2')
+    hosts.append('gateway3')
+    hosts.append('gateway4')
 
     services = []
     services.append('DefibrillatorService')
