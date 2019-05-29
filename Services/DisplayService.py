@@ -88,7 +88,8 @@ class GatewayAddressFrame(tk.LabelFrame):
 class GatewayBenchmarkFrame(tk.LabelFrame):
     def __init__(self, parent, hosts):
         tk.LabelFrame.__init__(self, parent, text=' Benchmark ')
-        self.plot = collections.defaultdict(lambda: Display.BoxPlot.BoxPlot(self, 1, 50))
+        self.plot = collections.defaultdict(lambda: tk.Label(self, text='????'))
+        print(len(hosts))
         for irow in range(len(hosts)):
             host = hosts[irow]
             self.plot[host].grid(row=irow, column=0, stick='news')
@@ -118,6 +119,8 @@ class DisplayGUI(tk.Frame):
 
     def update_service_status(self, host, service, status):
         self.service_status_frame.labels[host][service]['text'] = status
+        if 'OFFLINE' in status:
+            self.update_gateway_address(host, '')
 
     def update_service_version(self, host, version):
         self.service_version_frame.labels[host]['text'] = version
