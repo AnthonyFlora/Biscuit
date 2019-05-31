@@ -14,6 +14,11 @@ if [ $HOST = "gateway" ]; then
   python3 ${DIRECTORY}/Services/DefibrillatorService.py &
 fi
 
+if [ $HOST = "gateway2" ]; then
+  python3 ${DIRECTORY}/Services/GatewayService.py &
+  python3 ${DIRECTORY}/Services/DefibrillatorService.py &
+fi
+
 if [ $HOST = "hyperion" ]; then
   python3 ${DIRECTORY}/Services/DisplayService.py root@192.168.11.1 &
   python3 ${DIRECTORY}/Services/GatewayService.py root@192.168.11.1 &
