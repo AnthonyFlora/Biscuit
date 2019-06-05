@@ -64,9 +64,8 @@ class GatewayService(Services.Service.Service):
 
     def send_benchmark_results(self):
         benchmark_json = self.get_benchmark_results()
-        message = Messages.GatewayBenchmarkResults.GatewayBenchmarkResults()
+        message = Messages.GatewayBenchmarkResults.GatewayBenchmarkResults(self.hostname)
         message.from_json(benchmark_json)
-        message.hostname = self.hostname
         self.client.publish(self.gateway_benchmark_results_topic, message.to_json(), qos=1)
 
 
