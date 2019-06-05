@@ -9,7 +9,6 @@ class GatewayBenchmarkResults:
         self.ping = ''
 
     def from_dict(self, dict_data):
-        self.hostname = dict_data['hostname']
         self.download_speed = dict_data['download']
         self.upload_speed = dict_data['upload']
         self.ping = dict_data['ping']
