@@ -56,7 +56,7 @@ class HostNameFrame(tk.LabelFrame):
 class ServiceVersionFrame(tk.LabelFrame):
     def __init__(self, parent, hosts):
         tk.LabelFrame.__init__(self, parent, text=' Version ')
-        self.labels = collections.defaultdict(lambda: tk.Label(self, text='????'))
+        self.labels = collections.defaultdict(lambda: tk.Label(self, text='UNKNOWN'))
         for irow in range(len(hosts)):
             host = hosts[irow]
             self.labels[host].grid(row=irow, column=0, sticky='news')
@@ -72,7 +72,7 @@ class ServiceStatusFrame(tk.Frame):
             frame.grid(row=0, column=icol, sticky='news')
             for irow in range(len(hosts)):
                 host = hosts[irow]
-                self.labels[host][service] = tk.Label(frame, text='OFFLINE')
+                self.labels[host][service] = tk.Label(frame, text='UNKNOWN')
                 self.labels[host][service].grid(row=irow, column=icol, sticky='news')
 
 

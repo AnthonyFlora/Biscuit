@@ -1,4 +1,5 @@
 import Services.Service
+import Messages.GatewayBenchmarkResults
 import Messages.GatewayStatus
 import Messages.GatewayStatusRequest
 import Messages.SystemRebootRequest
@@ -19,8 +20,10 @@ class GatewayService(Services.Service.Service):
         self.gateway_status.hostname = self.hostname
         self.gateway_status.gateway_name = command_prefix
         self.gateway_status_topic = '/biscuit/Messages/GatewayStatus'
+        self.gateway_benchmark_results_topic = '/biscuit/Messages/GatewayBenchmarkResults'
         self.update_gateway_status()
         self.send_gateway_status()
+        self.send_benchmark_results()
         self.setup_handler('/biscuit/Messages/GatewayRebootRequest', self.on_receive_gateway_reboot_request)
         self.setup_handler('/biscuit/Messages/GatewayStatusRequest', self.on_receive_gateway_status_request)
 
@@ -52,6 +55,21 @@ class GatewayService(Services.Service.Service):
         access_point_address = subprocess.check_output(cmd, shell=True)
         access_point_address = access_point_address.decode('utf-8').split().pop()
         return access_point_address
+
+    def get_benchmark_results(self):
+        cmd = 'speedtest-cli --json 2>/dev/null'
+        benchmark_json = subprocess.check_output(cmd, shell=True)
+        benchmark_json = benchmark_json.decode('utf-8')
+        return benchmark_json
+
+    def send_benchmark_results(self):
+        benchmark_json = self.get_benchmark_results()
+        message = Messages.GatewayBenchmarkResults.GatewayBenchmarkResults()
+        message.from_json(benchmark_json)
+        message.hostname = self.hostname
+        self.client.publish(self.gateway_benchmark_results_topic, message.to_json(), qos=1)
+
+
 
 
 if __name__ == '__main__':
