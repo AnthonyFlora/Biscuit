@@ -10,9 +10,9 @@ class GatewayBenchmarkResults:
 
     def from_dict(self, dict_data):
         self.hostname = dict_data['hostname']
-        self.service = dict_data['download']
-        self.status = dict_data['upload']
-        self.version = dict_data['ping']
+        self.download_speed = dict_data['download']
+        self.upload_speed = dict_data['upload']
+        self.ping = dict_data['ping']
 
     def from_json(self, json_data):
         dict_data = json.loads(json_data)
