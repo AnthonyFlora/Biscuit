@@ -1,5 +1,5 @@
 import json
-
+import time
 
 class GatewayBenchmarkResults:
     def __init__(self, hostname):
@@ -10,10 +10,11 @@ class GatewayBenchmarkResults:
         self.last_update = ''
 
     def from_dict(self, dict_data):
+        # hostname in init
         self.download_speed = str(dict_data['download'])
         self.upload_speed = str(dict_data['upload'])
         self.ping = str(dict_data['ping'])
-        self.last_update = str(dict_data['last_update'])
+        self.last_update = '%0.6f' % time.time()
 
     def from_json(self, json_data):
         dict_data = json.loads(json_data)

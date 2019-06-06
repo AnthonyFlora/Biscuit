@@ -77,7 +77,6 @@ class GatewayService(Services.Service.Service):
     def update_benchmark_results(self):
         benchmark_json = self.get_benchmark_results()
         self.gateway_benchmark_results.from_json(benchmark_json)
-        self.gateway_benchmark_results.last_update = '%0.6f' % time.time()
         self.send_benchmark_results()
 
     def send_benchmark_results(self):
