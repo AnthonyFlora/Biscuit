@@ -4,7 +4,7 @@ import datetime
 import time
 import tkinter as tk
 import threading
-import Display.BoxPlot
+import Messages.GatewayBenchmarkRequest
 import Messages.GatewayStatus
 import Messages.GatewayStatusRequest
 import Messages.ServiceStatus
@@ -30,6 +30,7 @@ class DisplayService(Services.Service.Service):
         self.gui.queue_callback(functools.partial(gui.update_service_version, host, version))
         if service == 'GatewayService':
             self.request_gateway_status(host)
+            self.request_benchmark_status(host)
 
     def on_receive_gateway_status(self, message):
         m = Messages.GatewayStatus.GatewayStatus()
@@ -42,6 +43,13 @@ class DisplayService(Services.Service.Service):
         m = Messages.GatewayStatusRequest.GatewayStatusRequest()
         m.hostname = host
         self.client.publish('/biscuit/Messages/GatewayStatusRequest', m.to_json(), qos=1)
+
+    def request_benchmark_status(self, host):
+        m = Messages.GatewayBenchmarkRequest.GatewayBenchmarkRequest()
+        m.hostname = host
+        m.refresh = False
+        self.client.publish('/biscuit/Messages/GatewayBenchmarkRequest', m.to_json(), qos=1)
+
 
 
 class HostNameFrame(tk.LabelFrame):

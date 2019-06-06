@@ -1,4 +1,5 @@
 import Services.Service
+import Messages.GatewayBenchmarkRequest
 import Messages.GatewayBenchmarkResults
 import Messages.GatewayStatus
 import Messages.GatewayStatusRequest
@@ -24,6 +25,7 @@ class GatewayService(Services.Service.Service):
         self.gateway_benchmark_results_topic = '/biscuit/Messages/GatewayBenchmarkResults'
         self.update_gateway_status()
         self.update_benchmark_results()
+        self.setup_handler('/biscuit/Messages/GatewayBenchmarkRequest', self.on_receive_gateway_benchmark_request)
         self.setup_handler('/biscuit/Messages/GatewayRebootRequest', self.on_receive_gateway_reboot_request)
         self.setup_handler('/biscuit/Messages/GatewayStatusRequest', self.on_receive_gateway_status_request)
 
@@ -43,6 +45,15 @@ class GatewayService(Services.Service.Service):
         if m.hostname == self.hostname:
             self.update_gateway_status()
             self.send_gateway_status()
+
+    def on_receive_gateway_benchmark_request(self, message):
+        m = Messages.GatewayBenchmarkRequest.GatewayBenchmarkRequest()
+        m.from_json(message)
+        if m.hostname == self.hostname:
+            if m.refresh:
+                self.update_gateway_status()
+            else:
+                self.send_gateway_status()
 
     def send_gateway_status(self):
         self.client.publish(self.gateway_status_topic, self.gateway_status.to_json(), qos=1)
