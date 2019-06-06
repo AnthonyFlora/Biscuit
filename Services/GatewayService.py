@@ -51,9 +51,9 @@ class GatewayService(Services.Service.Service):
         m.from_json(message)
         if m.hostname == self.hostname:
             if m.refresh:
-                self.update_gateway_status()
+                self.update_benchmark_results()
             else:
-                self.send_gateway_status()
+                self.send_benchmark_results()
 
     def send_gateway_status(self):
         self.client.publish(self.gateway_status_topic, self.gateway_status.to_json(), qos=1)
