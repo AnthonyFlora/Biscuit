@@ -42,17 +42,14 @@ class DisplayService(Services.Service.Service):
         self.gui.queue_callback(functools.partial(gui.update_gateway_address, host, address))
 
     def on_receive_gateway_benchmark_results(self, message):
-        print('processing benchmark results')
         m = Messages.GatewayBenchmarkResults.GatewayBenchmarkResults()
         m.from_json(message)
-        print('got message')
         host = m.hostname
         ping = m.ping
         last_update = m.last_update
         download = '%0.3f' % (float(m.download) / (1024.0 * 1024.0))
         upload = '%0.3f' % (float(m.upload) / (1024.0 * 1024.0))
         text = '%s : %s mb/s up,  %s mb/s dn, %s ms' % (last_update, download, upload, ping)
-        print(host, text)
         self.gui.queue_callback(functools.partial(gui.update_benchmark_results, host, text))
 
     def request_gateway_status(self, host):
