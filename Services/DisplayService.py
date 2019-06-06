@@ -5,6 +5,7 @@ import time
 import tkinter as tk
 import threading
 import Messages.GatewayBenchmarkRequest
+import Messages.GatewayBenchmarkResults
 import Messages.GatewayStatus
 import Messages.GatewayStatusRequest
 import Messages.ServiceStatus
@@ -18,6 +19,7 @@ class DisplayService(Services.Service.Service):
         self.hosts = hosts
         self.setup_handler('/biscuit/Statuses/#', self.on_receive_service_status)
         self.setup_handler('/biscuit/Messages/GatewayStatus', self.on_receive_gateway_status)
+        self.setup_handler('/biscuit/Messages/GatewayBenchmarkResults', self.on_receive_gateway_benchmark_results)
 
     def on_receive_service_status(self, message):
         m = Messages.ServiceStatus.ServiceStatus()
@@ -38,6 +40,20 @@ class DisplayService(Services.Service.Service):
         host = m.hostname
         address = m.access_point_address
         self.gui.queue_callback(functools.partial(gui.update_gateway_address, host, address))
+
+    def on_receive_gateway_benchmark_results(self, message):
+        print('processing benchmark results')
+        m = Messages.GatewayBenchmarkResults.GatewayBenchmarkResults()
+        m.from_json(message)
+        print('got message')
+        host = m.hostname
+        ping = m.ping
+        last_update = m.last_update
+        download = '%0.3f' % (float(m.download_speed) / (1024.0 * 1024.0))
+        upload = '%0.3f' % (float(m.upload_speed) / (1024.0 * 1024.0))
+        text = '%s : %s mb/s up,  %s mb/s dn, %s ms' % (last_update, download, upload, ping)
+        print(host, text)
+        self.gui.queue_callback(functools.partial(gui.update_benchmark_results, host, text))
 
     def request_gateway_status(self, host):
         m = Messages.GatewayStatusRequest.GatewayStatusRequest()
@@ -96,11 +112,11 @@ class GatewayAddressFrame(tk.LabelFrame):
 class GatewayBenchmarkFrame(tk.LabelFrame):
     def __init__(self, parent, hosts):
         tk.LabelFrame.__init__(self, parent, text=' Benchmark ')
-        self.plot = collections.defaultdict(lambda: tk.Label(self, text='????'))
+        self.labels = collections.defaultdict(lambda: tk.Label(self, text='????'))
         print(len(hosts))
         for irow in range(len(hosts)):
             host = hosts[irow]
-            self.plot[host].grid(row=irow, column=0, stick='news')
+            self.labels[host].grid(row=irow, column=0, stick='news')
 
 
 class DisplayGUI(tk.Frame):
@@ -135,6 +151,9 @@ class DisplayGUI(tk.Frame):
 
     def update_gateway_address(self, host, address):
         self.gateway_address_frame.labels[host]['text'] = address
+
+    def update_benchmark_results(self, host, text):
+        self.gateway_benchmark_frame.labels[host]['text'] = text
 
     def queue_callback(self, callback):
         self.callbacks.put(callback)

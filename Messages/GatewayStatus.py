@@ -1,4 +1,5 @@
 import json
+import time
 #import collections
 #import Messages.SurveyStatus.SurveyStatus
 
@@ -22,6 +23,7 @@ class GatewayStatus:
         self.utilization = dict_data['utilization']
         # for k, v in dict_data['survey_status'].items():
         #     self.survey_status[k].from_dict(v)
+        self.last_update = '%0.6f' % time.time()
 
     def from_json(self, json_data):
         dict_data = json.loads(json_data)

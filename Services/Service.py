@@ -22,7 +22,7 @@ class Service:
         self.service_state = Messages.ServiceStatus.ServiceStatus()
         self.service_state.hostname = self.hostname
         self.service_state.service = self.service_name
-        self.service_state.version = '20190605_0855p'
+        self.service_state.version = '20190605_0935p'
         self.service_state.status = 'OFFLINE'
         self.client.will_set(self.service_status_topic, self.service_state.to_json(), qos=1, retain=True)
 

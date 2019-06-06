@@ -2,7 +2,7 @@ import json
 import time
 
 class GatewayBenchmarkResults:
-    def __init__(self, hostname):
+    def __init__(self, hostname=''):
         self.hostname = hostname
         self.download_speed = ''
         self.upload_speed = ''
@@ -10,9 +10,10 @@ class GatewayBenchmarkResults:
         self.last_update = ''
 
     def from_dict(self, dict_data):
-        # hostname in init
-        self.download_speed = str(dict_data['download'])
-        self.upload_speed = str(dict_data['upload'])
+        if self.hostname == '':
+            self.hostname = str(dict_data['hostname'])
+        self.download_speed = str(dict_data['download_speed'])
+        self.upload_speed = str(dict_data['upload_speed'])
         self.ping = str(dict_data['ping'])
         self.last_update = '%0.6f' % time.time()
 
