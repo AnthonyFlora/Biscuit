@@ -10,7 +10,7 @@ class GatewayBenchmarkResults:
         self.last_update = ''
 
     def from_dict(self, dict_data):
-        if self.hostname == '':
+        if 'hostname' in dict_data:
             self.hostname = str(dict_data['hostname'])
         self.download = str(dict_data['download'])
         self.upload = str(dict_data['upload'])
