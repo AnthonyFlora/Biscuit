@@ -20,10 +20,10 @@ class GatewayService(Services.Service.Service):
         self.gateway_status.hostname = self.hostname
         self.gateway_status.gateway_name = command_prefix
         self.gateway_status_topic = '/biscuit/Messages/GatewayStatus'
+        self.gateway_benchmark_results = Messages.GatewayBenchmarkResults.GatewayBenchmarkResults(self.hostname)
         self.gateway_benchmark_results_topic = '/biscuit/Messages/GatewayBenchmarkResults'
         self.update_gateway_status()
-        self.send_gateway_status()
-        self.send_benchmark_results()
+        self.update_benchmark_results()
         self.setup_handler('/biscuit/Messages/GatewayRebootRequest', self.on_receive_gateway_reboot_request)
         self.setup_handler('/biscuit/Messages/GatewayStatusRequest', self.on_receive_gateway_status_request)
 
@@ -49,6 +49,7 @@ class GatewayService(Services.Service.Service):
 
     def update_gateway_status(self):
         self.gateway_status.access_point_address = self.get_access_point_address()
+        self.send_gateway_status()
 
     def get_access_point_address(self):
         cmd = '%s iwconfig 2>/dev/null | grep Access | grep -v Not-Associated' % (self.command_prefix)
@@ -62,11 +63,13 @@ class GatewayService(Services.Service.Service):
         benchmark_json = benchmark_json.decode('utf-8')
         return benchmark_json
 
-    def send_benchmark_results(self):
+    def update_benchmark_results(self):
         benchmark_json = self.get_benchmark_results()
-        message = Messages.GatewayBenchmarkResults.GatewayBenchmarkResults(self.hostname)
-        message.from_json(benchmark_json)
-        self.client.publish(self.gateway_benchmark_results_topic, message.to_json(), qos=1)
+        self.gateway_benchmark_results.from_json(benchmark_json)
+        self.send_benchmark_results()
+
+    def send_benchmark_results(self):
+        self.client.publish(self.gateway_benchmark_results_topic, self.gateway_benchmark_results.to_json(), qos=1)
 
 
 
