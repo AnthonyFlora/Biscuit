@@ -15,7 +15,8 @@ class GatewayBenchmarkResults:
         self.download = str(dict_data['download'])
         self.upload = str(dict_data['upload'])
         self.ping = str(dict_data['ping'])
-        self.last_update = '%0.6f' % time.time()
+        if 'last_update' in dict_data:
+            self.last_update = '%0.6f' % time.time()
 
     def from_json(self, json_data):
         dict_data = json.loads(json_data)
