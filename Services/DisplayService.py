@@ -13,10 +13,8 @@ import Messages.SystemUpdateRequest
 import functools
 import queue
 
-# TODO: Add Update option to first row for each host
-# TODO: Add Retest option to second row for each host
-# TODO: Split benchmark into LastUpdate (2 col span), Download, Upload, Ping
-
+# TODO display for last message, sent??
+# TODO control to select specific APs
 
 class DisplayService(Services.Service.Service):
     def __init__(self, gui):
@@ -74,6 +72,7 @@ class DisplayService(Services.Service.Service):
         m = Messages.GatewayBenchmarkRequest.GatewayBenchmarkRequest()
         m.hostname = host
         m.refresh = refresh
+        self.request_gateway_status()
         self.client.publish('/biscuit/Messages/GatewayBenchmarkRequest', m.to_json(), qos=1)
 
 
@@ -84,6 +83,7 @@ class HostNameFrame(tk.LabelFrame):
         self.labels = collections.defaultdict(lambda: tk.Label(self, text='????'))
         for irow in range(len(hosts)):
             host = hosts[irow]
+            self.rowconfigure(irow, weight=1)
             self.labels[host]['text'] = host
             self.labels[host].grid(row=irow, column=0, sticky='news')
 
@@ -93,6 +93,7 @@ class ServiceVersionFrame(tk.LabelFrame):
         self.labels = collections.defaultdict(lambda: tk.Label(self, text='UNKNOWN'))
         for irow in range(len(hosts)):
             host = hosts[irow]
+            self.rowconfigure(irow, weight=1)
             self.labels[host].grid(row=irow, column=0, sticky='news')
 
 class ServiceUpdateFrame(tk.LabelFrame):
@@ -127,6 +128,7 @@ class ServiceStatusFrame(tk.Frame):
             frame.grid(row=0, column=icol, sticky='news')
             for irow in range(len(hosts)):
                 host = hosts[irow]
+                self.rowconfigure(irow, weight=1)
                 self.labels[host][service] = tk.Label(frame, text='UNKNOWN')
                 self.labels[host][service].grid(row=irow, column=icol, sticky='news')
 
@@ -136,6 +138,7 @@ class GatewayAddressFrame(tk.LabelFrame):
         self.labels = collections.defaultdict(lambda: tk.Label(self, text='????'))
         for irow in range(len(hosts)):
             host = hosts[irow]
+            self.rowconfigure(irow, weight=1)
             self.labels[host].grid(row=irow, column=0, sticky='news')
 
 
@@ -146,6 +149,7 @@ class GatewayBenchmarkFrame(tk.LabelFrame):
         print(len(hosts))
         for irow in range(len(hosts)):
             host = hosts[irow]
+            self.rowconfigure(irow, weight=1)
             self.labels[host].grid(row=irow, column=0, stick='news')
 
 
