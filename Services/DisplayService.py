@@ -125,7 +125,7 @@ class ServiceStatusFrame(tk.Frame):
         for icol in range(len(services)):
             service = services[icol]
             frame = tk.LabelFrame(self, text=' ' + service + ' ')
-            frame.rowconfigure(irow, weight=1)
+            frame.rowconfigure(0, weight=1)
             frame.grid(row=0, column=icol, sticky='news')
             for irow in range(len(hosts)):
                 host = hosts[irow]
