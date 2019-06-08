@@ -9,8 +9,14 @@ import Messages.GatewayBenchmarkResults
 import Messages.GatewayStatus
 import Messages.GatewayStatusRequest
 import Messages.ServiceStatus
+import Messages.SystemUpdateRequest
 import functools
 import queue
+
+# TODO: Add Update option to first row for each host
+# TODO: Add Retest option to second row for each host
+# TODO: Split benchmark into LastUpdate (2 col span), Download, Upload, Ping
+
 
 class DisplayService(Services.Service.Service):
     def __init__(self, gui):
@@ -20,6 +26,8 @@ class DisplayService(Services.Service.Service):
         self.setup_handler('/biscuit/Statuses/#', self.on_receive_service_status)
         self.setup_handler('/biscuit/Messages/GatewayStatus', self.on_receive_gateway_status)
         self.setup_handler('/biscuit/Messages/GatewayBenchmarkResults', self.on_receive_gateway_benchmark_results)
+        self.gui.queue_callback(functools.partial(gui.set_callback_system_update_request, self.request_system_update))
+        self.gui.queue_callback(functools.partial(gui.set_callback_request_benchmark, self.request_benchmark_status))
 
     def on_receive_service_status(self, message):
         m = Messages.ServiceStatus.ServiceStatus()
@@ -52,15 +60,20 @@ class DisplayService(Services.Service.Service):
         text = '%s : %s mb/s dn,  %s mb/s up, %s ms' % (last_update, download, upload, ping)
         self.gui.queue_callback(functools.partial(gui.update_benchmark_results, host, text))
 
+    def request_system_update(self, host):
+        m = Messages.SystemUpdateRequest.SystemUpdateRequest()
+        m.hostname = host
+        self.client.publish('/biscuit/Messages/SystemUpdateRequest', m.to_json(), qos=1)
+
     def request_gateway_status(self, host):
         m = Messages.GatewayStatusRequest.GatewayStatusRequest()
         m.hostname = host
         self.client.publish('/biscuit/Messages/GatewayStatusRequest', m.to_json(), qos=1)
 
-    def request_benchmark_status(self, host):
+    def request_benchmark_status(self, host, refresh=False):
         m = Messages.GatewayBenchmarkRequest.GatewayBenchmarkRequest()
         m.hostname = host
-        m.refresh = False
+        m.refresh = refresh
         self.client.publish('/biscuit/Messages/GatewayBenchmarkRequest', m.to_json(), qos=1)
 
 
@@ -82,6 +95,27 @@ class ServiceVersionFrame(tk.LabelFrame):
             host = hosts[irow]
             self.labels[host].grid(row=irow, column=0, sticky='news')
 
+class ServiceUpdateFrame(tk.LabelFrame):
+    def __init__(self, parent, hosts):
+        tk.LabelFrame.__init__(self, parent, text=' Update ')
+        self.buttons = collections.defaultdict(lambda: tk.Button(self, text='Update'))
+        for irow in range(len(hosts)):
+            host = hosts[irow]
+            self.rowconfigure(irow, weight=1)
+            self.buttons[host]['text'] = host
+            self.buttons[host]['command'] = lambda host=host, parent=parent: parent.callback_system_update_request(host)
+            self.buttons[host].grid(row=irow, column=0, sticky='news')
+
+class BenchmarkUpdateFrame(tk.LabelFrame):
+    def __init__(self, parent, hosts):
+        tk.LabelFrame.__init__(self, parent, text=' Update ')
+        self.buttons = collections.defaultdict(lambda: tk.Button(self, text='Update'))
+        for irow in range(len(hosts)):
+            host = hosts[irow]
+            self.rowconfigure(irow, weight=1)
+            self.buttons[host]['text'] = host
+            self.buttons[host]['command'] = lambda host=host, parent=parent: parent.callback_request_benchmark(host, refresh=True)
+            self.buttons[host].grid(row=irow, column=0, sticky='news')
 
 class ServiceStatusFrame(tk.Frame):
     def __init__(self, parent, hosts, services):
@@ -95,7 +129,6 @@ class ServiceStatusFrame(tk.Frame):
                 host = hosts[irow]
                 self.labels[host][service] = tk.Label(frame, text='UNKNOWN')
                 self.labels[host][service].grid(row=irow, column=icol, sticky='news')
-
 
 class GatewayAddressFrame(tk.LabelFrame):
     def __init__(self, parent, hosts):
@@ -119,12 +152,18 @@ class GatewayBenchmarkFrame(tk.LabelFrame):
 class DisplayGUI(tk.Frame):
     def __init__(self, parent, hosts, services):
         tk.Frame.__init__(self, parent)
+        self.winfo_toplevel().title("Biscuit - DisplayService")
+
+        self.callback_system_update_request = None
+        self.callback_request_benchmark = None
 
         HostNameFrame(self, hosts).grid(row=0, column=0, sticky='news')
         self.service_version_frame = ServiceVersionFrame(self, hosts)
         self.service_version_frame.grid(row=0, column=1, sticky='news')
         self.service_status_frame = ServiceStatusFrame(self, hosts, services)
         self.service_status_frame.grid(row=0, column=2, sticky='news', columnspan=5)
+        self.service_update_frame = ServiceUpdateFrame(self, hosts)
+        self.service_update_frame.grid(row=0, column=7, sticky='news')
 
         self.gateway_hostname_frame = HostNameFrame(self, hosts)
         self.gateway_hostname_frame.grid(row=1, column=0, sticky='news')
@@ -132,16 +171,24 @@ class DisplayGUI(tk.Frame):
         self.gateway_address_frame.grid(row=1, column=1, sticky='news')
         self.gateway_benchmark_frame = GatewayBenchmarkFrame(self, hosts)
         self.gateway_benchmark_frame.grid(row=1, column=2, sticky='news', columnspan=5)
+        self.benchmark_update_frame = BenchmarkUpdateFrame(self, hosts)
+        self.benchmark_update_frame.grid(row=1, column=7, sticky='news')
 
         self.callbacks = queue.Queue()
         self.process_callbacks()
 
         self.pack(padx=5, pady=5)
 
+    def set_callback_system_update_request(self, callback):
+        self.callback_system_update_request = callback
+        print('callback set system update')
+
+    def set_callback_request_benchmark(self, callback):
+        self.callback_request_benchmark = callback
+        print('callback set request benchmark')
+
     def update_service_status(self, host, service, status):
         self.service_status_frame.labels[host][service]['text'] = status
-        if 'OFFLINE' in status:
-            self.update_gateway_address(host, '')
 
     def update_service_version(self, host, version):
         self.service_version_frame.labels[host]['text'] = version
