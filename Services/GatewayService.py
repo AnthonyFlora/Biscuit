@@ -57,6 +57,7 @@ class GatewayService(Services.Service.Service):
 
     def send_gateway_status(self):
         self.client.publish(self.gateway_status_topic, self.gateway_status.to_json(), qos=1)
+        self.send_benchmark_results()
 
     def update_gateway_status(self):
         self.gateway_status.access_point_address = self.get_access_point_address()

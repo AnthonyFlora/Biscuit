@@ -21,11 +21,11 @@ class DisplayService(Services.Service.Service):
         Services.Service.Service.__init__(self, 'DisplayService')
         self.gui = gui
         self.hosts = hosts
-        self.setup_handler('/biscuit/Statuses/#', self.on_receive_service_status)
-        self.setup_handler('/biscuit/Messages/GatewayStatus', self.on_receive_gateway_status)
-        self.setup_handler('/biscuit/Messages/GatewayBenchmarkResults', self.on_receive_gateway_benchmark_results)
         self.gui.queue_callback(functools.partial(gui.set_callback_system_update_request, self.request_system_update))
         self.gui.queue_callback(functools.partial(gui.set_callback_request_benchmark, self.request_benchmark_status))
+        self.setup_handler('/biscuit/Messages/GatewayStatus', self.on_receive_gateway_status)
+        self.setup_handler('/biscuit/Messages/GatewayBenchmarkResults', self.on_receive_gateway_benchmark_results)
+        self.setup_handler('/biscuit/Statuses/#', self.on_receive_service_status)
 
     def on_receive_service_status(self, message):
         m = Messages.ServiceStatus.ServiceStatus()
