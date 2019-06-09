@@ -72,7 +72,7 @@ class DisplayService(Services.Service.Service):
         m = Messages.GatewayBenchmarkRequest.GatewayBenchmarkRequest()
         m.hostname = host
         m.refresh = refresh
-        self.request_gateway_status()
+        self.request_gateway_status(host)
         self.client.publish('/biscuit/Messages/GatewayBenchmarkRequest', m.to_json(), qos=1)
 
 
