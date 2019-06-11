@@ -65,9 +65,14 @@ class GatewayService(Services.Service.Service):
 
     def get_access_point_address(self):
         cmd = '%s iwconfig 2>/dev/null | grep Access | grep -v Not-Associated' % (self.command_prefix)
-        access_point_address = subprocess.check_output(cmd, shell=True)
-        access_point_address = access_point_address.decode('utf-8').split().pop()
-        return access_point_address
+        ret = ''
+        try:
+            access_point_address = subprocess.check_output(cmd, shell=True)
+            access_point_address = access_point_address.decode('utf-8').split().pop()
+            ret = access_point_address
+        except:
+            None
+        return ret
 
     def get_benchmark_results(self):
         cmd = 'speedtest-cli --json 2>/dev/null'
