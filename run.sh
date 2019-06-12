@@ -1,5 +1,11 @@
 #! /bin/bash
 
+# gateway  00:c0:ca:96:db:a6
+# gateway2 00:c0:ca:97:1a:e3
+# gateway3 00:c0:ca:97:b3:11
+# gateway4 00:c0:ca:97:b7:87
+
+
 HOST=`hostname -s`
 DIRECTORY=`dirname $0`
 cd ${DIRECTORY}
@@ -20,6 +26,7 @@ if [ $HOST = "gateway1" ]; then
 fi
 
 if [ $HOST = "gateway2" ]; then
+  python3 ${DIRECTORY}/Services/DisplayService.py &
   python3 ${DIRECTORY}/Services/GatewayService.py &
   python3 ${DIRECTORY}/Services/DefibrillatorService.py &
 fi
