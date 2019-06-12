@@ -26,7 +26,6 @@ if [ $HOST = "gateway1" ]; then
 fi
 
 if [ $HOST = "gateway2" ]; then
-  python3 ${DIRECTORY}/Services/DisplayService.py &
   python3 ${DIRECTORY}/Services/GatewayService.py &
   python3 ${DIRECTORY}/Services/DefibrillatorService.py &
 fi
