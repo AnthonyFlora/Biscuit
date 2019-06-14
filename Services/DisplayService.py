@@ -222,7 +222,7 @@ if __name__== '__main__':
 
     hosts = []
     hosts.append('hyperion')
-    hosts.append('gateway')
+    hosts.append('gateway1')
     hosts.append('gateway2')
     hosts.append('gateway3')
     hosts.append('gateway4')

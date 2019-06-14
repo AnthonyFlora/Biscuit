@@ -1,9 +1,27 @@
 #! /bin/bash
 
+# Gateways
+#
 # gateway  00:c0:ca:96:db:a6
 # gateway2 00:c0:ca:97:1a:e3
 # gateway3 00:c0:ca:97:b3:11
 # gateway4 00:c0:ca:97:b7:87
+
+# Connect to AP
+#
+# sudo iwlist wlan1 scan | grep "ESSID\|Signal\|Address" | grep -B2 xfinity
+#
+# sudo ip link set wlan1 down
+# sudo ip addr flush dev wlan1
+# sudo ip link set wlan1 up
+# sudo iwconfig wlan1 essid xfinitywifi ap CE:CA:B5:EF:B5:50
+#
+# sudo ip link set wlan1 down; sudo ip addr flush dev wlan1; sudo ip link set wlan1 up; sudo iwconfig wlan1 essid xfinitywifi ap CE:CA:B5:EF:B5:50
+#
+# ifconfig
+
+
+
 
 
 HOST=`hostname -s`
