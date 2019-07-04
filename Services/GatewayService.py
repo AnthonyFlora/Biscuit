@@ -15,7 +15,6 @@ import subprocess
 
 class GatewayService(Services.Service.Service):
     def __init__(self, command_prefix):
-        os.system('sudo ip link set wlan1 down; sudo ip addr flush dev wlan1; sudo ip link set wlan1 up; sudo iwconfig wlan1 essid xfinitywifi ap CE:CA:B5:EF:B5:50')
         Services.Service.Service.__init__(self, 'GatewayService')
         self.command_prefix = ''
         if command_prefix:
@@ -102,6 +101,7 @@ if __name__ == '__main__':
 
     while True:
         try:
+            os.system('sudo ip link set wlan1 down; sudo ip addr flush dev wlan1; sudo ip link set wlan1 up; sudo iwconfig wlan1 essid xfinitywifi ap CE:CA:B5:EF:B5:50')
             component = GatewayService(arg_command_prefix)
             component.run()
         except:
