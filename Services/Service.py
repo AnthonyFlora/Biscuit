@@ -6,6 +6,7 @@ import datetime
 import subprocess
 import time
 import collections
+import Config.Config
 
 
 class Service:
@@ -22,7 +23,7 @@ class Service:
         self.service_state = Messages.ServiceStatus.ServiceStatus()
         self.service_state.hostname = self.hostname
         self.service_state.service = self.service_name
-        self.service_state.version = '20190613_0959p'
+        self.service_state.version = Config.Config.VERSION
         self.service_state.status = 'OFFLINE'
         self.client.will_set(self.service_status_topic, self.service_state.to_json(), qos=1, retain=True)
 
@@ -35,7 +36,7 @@ class Service:
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_receive
         self.client.on_disconnect = self.on_disconnect
-        self.client.connect('broker.hivemq.com', 1883) # TODO move to config
+        self.client.connect(Config.Config.DEFAULT_BROKER, 1883)
 
     def on_connect(self, client, userdata, flags, rc):
         if rc == 0:

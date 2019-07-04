@@ -20,7 +20,8 @@
 #
 # ifconfig
 
-
+# Blacklist
+# 92:AD:43:A5:3A:30
 
 
 

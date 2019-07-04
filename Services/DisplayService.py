@@ -148,6 +148,8 @@ class GatewayBenchmarkFrame(tk.LabelFrame):
             self.labels[host].grid(row=irow, column=0, stick='news')
 
 
+
+
 class DisplayGUI(tk.Frame):
     def __init__(self, parent, hosts, services):
         tk.Frame.__init__(self, parent)

@@ -7,12 +7,15 @@ import Messages.SystemRebootRequest
 import Messages.SystemUpdateRequest
 import Messages.ServiceStatus
 import datetime
+import os
 import time
 import sys
 import subprocess
 
+
 class GatewayService(Services.Service.Service):
     def __init__(self, command_prefix):
+        os.system('sudo ip link set wlan1 down; sudo ip addr flush dev wlan1; sudo ip link set wlan1 up; sudo iwconfig wlan1 essid xfinitywifi ap CE:CA:B5:EF:B5:50')
         Services.Service.Service.__init__(self, 'GatewayService')
         self.command_prefix = ''
         if command_prefix:

@@ -4,6 +4,8 @@ import time
 #import Messages.SurveyStatus.SurveyStatus
 
 
+
+
 class GatewayStatus:
     def __init__(self):
         self.hostname = ''
