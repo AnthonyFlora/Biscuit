@@ -35,7 +35,7 @@ if [ $HOST = "Anthonys-MacBook-Pro" ]; then
 fi
 
 if [ $HOST = "gateway1" ]; then
-  sudo ip link set wlan1 down; sudo ip addr flush dev wlan1; sudo ip link set wlan1 up; sudo iwconfig wlan1 essid xfinitywifi ap CE:CA:B5:EF:B5:50
+  #sudo ip link set wlan1 down; sudo ip addr flush dev wlan1; sudo ip link set wlan1 up; sudo iwconfig wlan1 essid xfinitywifi ap CE:CA:B5:EF:B5:50
   python3 ${DIRECTORY}/Services/GatewayService.py &
   python3 ${DIRECTORY}/Services/DefibrillatorService.py &
 fi
@@ -60,7 +60,7 @@ fi
 
 
 if [ $HOST = "hyperion" ]; then
-  #python3 ${DIRECTORY}/Services/DisplayService.py &
+  python3 ${DIRECTORY}/Services/DisplayService.py &
   python3 ${DIRECTORY}/Services/GatewayService.py &
 fi
 
