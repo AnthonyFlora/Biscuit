@@ -40,7 +40,6 @@ class GatewayService(Services.Service.Service):
 
     def send_gateway_status(self):
         self.client.publish(self.gateway_status_topic, self.gateway_status.to_json(), qos=1)
-        self.send_gateway_status()
 
     def update_gateway_status(self):
         self.gateway_status.access_point = self.get_access_point_address()
