@@ -32,6 +32,7 @@ class GatewayService(Services.Service.Service):
             self.send_gateway_status()
 
     def on_receive_gateway_benchmark_request(self, message):
+        return # TODO
         m = Messages.GatewayBenchmarkRequest.GatewayBenchmarkRequest()
         m.from_json(message)
         if m.hostname == self.hostname:
