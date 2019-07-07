@@ -61,7 +61,6 @@ fi
 
 if [ $HOST = "hyperion" ]; then
   python3 ${DIRECTORY}/Services/DisplayService.py &
-  python3 ${DIRECTORY}/Services/GatewayService.py &
 fi
 
 python3 ${DIRECTORY}/Services/SystemService.py &
