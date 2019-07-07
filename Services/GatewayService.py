@@ -62,7 +62,6 @@ class GatewayService(Services.Service.Service):
         return benchmark_json
 
     def update_benchmark_results(self):
-        return # TODO
         access_point = self.get_access_point_address()
         benchmark_json = self.get_benchmark_results()
         self.gateway_status.survey_status[access_point].from_json(benchmark_json)
