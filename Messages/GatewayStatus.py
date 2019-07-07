@@ -12,11 +12,15 @@ class SurveyStatus:
         self.last_update = ''
 
     def from_dict(self, dict_data):
-        self.access_point = str(dict_data['access_point'])
+        if 'access_point' in dict_data:
+            self.access_point = str(dict_data['access_point'])
         self.download = str(dict_data['download'])
         self.upload = str(dict_data['upload'])
         self.ping = str(dict_data['ping'])
-        self.last_update = '%0.6f' % time.time()
+        if 'last_update' in dict_data:
+            self.last_update = str(dict_data['last_update'])
+        else:
+            self.last_update = '%0.6f' % time.time()
 
     def to_json(self):
         return json.dumps(self, default=lambda x: x.__dict__, sort_keys=True)
