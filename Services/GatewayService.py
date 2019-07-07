@@ -66,7 +66,7 @@ class GatewayService(Services.Service.Service):
         access_point = self.get_access_point_address()
         self.client.publish('/biscuit/debug', 'Getting BM', qos=1)
         benchmark_json = self.get_benchmark_results()
-        self.client.publish('/biscuit/debug', 'Setting MSG', qos=1)
+        self.client.publish('/biscuit/debug', 'Setting MSG from %s' % benchmark_json, qos=1)
         self.gateway_status.survey_status[access_point].from_json(benchmark_json)
         self.gateway_status.survey_status[access_point].last_update = time.time()
 
