@@ -62,10 +62,15 @@ class GatewayService(Services.Service.Service):
         return benchmark_json
 
     def update_benchmark_results(self):
-        access_point = self.get_access_point_address()
-        benchmark_json = self.get_benchmark_results()
-        self.gateway_status.survey_status[access_point].from_json(benchmark_json)
-        self.gateway_status.survey_status[access_point].last_update = time.time()
+        access_point_before = None
+        access_point_after = None
+        benchmark_json = None
+        while (not access_point_before) or (access_point_before != access_point_after):
+            access_point_before = self.get_access_point_address()
+            benchmark_json = self.get_benchmark_results()
+            access_point_after = self.get_access_point_address()
+        self.gateway_status.survey_status[access_point_before].from_json(benchmark_json)
+        self.gateway_status.survey_status[access_point_before].last_update = time.time()
 
 
 
