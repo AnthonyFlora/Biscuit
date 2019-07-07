@@ -46,7 +46,6 @@ class GatewayService(Services.Service.Service):
 
     def update_gateway_status(self):
         self.gateway_status.access_point = self.get_access_point_address()
-        self.send_gateway_status()
 
     def get_access_point_address(self):
         cmd = 'iwconfig 2>/dev/null | grep Access | grep -v Not-Associated'
@@ -70,7 +69,6 @@ class GatewayService(Services.Service.Service):
         benchmark_json = self.get_benchmark_results()
         self.gateway_status.survey_status[access_point].from_json(benchmark_json)
         self.gateway_status.survey_status[access_point].last_update = time.time()
-        self.send_gateway_status()
 
 
 
