@@ -38,7 +38,7 @@ class DisplayService(Services.Service.Service):
         self.gui.queue_callback(functools.partial(gui.update_service_version, host, version))
         if service == 'GatewayService':
             self.request_gateway_status(host)
-            self.request_benchmark_status(host)
+            #self.request_benchmark_status(host)
 
     def on_receive_gateway_status(self, message):
         m = Messages.GatewayStatus.GatewayStatus()
