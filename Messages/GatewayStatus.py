@@ -22,6 +22,10 @@ class SurveyStatus:
         else:
             self.last_update = '%0.6f' % time.time()
 
+    def from_json(self, json_data):
+        dict_data = json.loads(json_data)
+        self.from_dict(dict_data)
+
     def to_json(self):
         return json.dumps(self, default=lambda x: x.__dict__, sort_keys=True)
 
