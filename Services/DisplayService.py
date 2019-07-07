@@ -44,7 +44,7 @@ class DisplayService(Services.Service.Service):
         m = Messages.GatewayStatus.GatewayStatus()
         m.from_json(message)
         host = m.hostname
-        address = m.access_point_address
+        address = m.access_point
         self.gui.queue_callback(functools.partial(gui.update_gateway_address, host, address))
 
     def on_receive_gateway_benchmark_results(self, message):

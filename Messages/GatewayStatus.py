@@ -1,30 +1,46 @@
+import collections
 import json
 import time
-#import collections
-#import Messages.SurveyStatus.SurveyStatus
 
 
+class SurveyStatus:
+    def __init__(self):
+        self.access_point = ''
+        self.download = ''
+        self.upload = ''
+        self.ping = ''
+        self.last_update = ''
+
+    def from_dict(self, dict_data):
+        self.access_point = str(dict_data['access_point'])
+        self.download = str(dict_data['download'])
+        self.upload = str(dict_data['upload'])
+        self.ping = str(dict_data['ping'])
+        self.last_update = '%0.6f' % time.time()
+
+    def to_json(self):
+        return json.dumps(self, default=lambda x: x.__dict__, sort_keys=True)
 
 
 class GatewayStatus:
     def __init__(self):
         self.hostname = ''
         self.gateway_name = ''
-        self.access_point_address = ''
+        self.access_point = ''
         self.status = ''
         self.last_update = ''
         self.utilization = ''
-        #self.survey_status = collections.defaultdict(lambda: Messages.SurveyStatus.SurveyStatus())
+        self.survey_status = collections.defaultdict(lambda: SurveyStatus())
 
     def from_dict(self, dict_data):
         self.hostname = dict_data['hostname']
         self.gateway_name = dict_data['gateway_name']
-        self.access_point_address = dict_data['access_point_address']
+        self.access_point = dict_data['access_point']
         self.status = dict_data['status']
         self.last_update = dict_data['last_update']
         self.utilization = dict_data['utilization']
-        # for k, v in dict_data['survey_status'].items():
-        #     self.survey_status[k].from_dict(v)
+        for k, v in dict_data['survey_status'].items():
+            self.survey_status[k].from_dict(v)
         self.last_update = '%0.6f' % time.time()
 
     def from_json(self, json_data):
@@ -33,4 +49,3 @@ class GatewayStatus:
 
     def to_json(self):
         return json.dumps(self, default=lambda x: x.__dict__, sort_keys=True)
-

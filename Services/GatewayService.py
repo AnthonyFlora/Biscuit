@@ -7,39 +7,22 @@ import Messages.SystemRebootRequest
 import Messages.SystemUpdateRequest
 import Messages.ServiceStatus
 import datetime
-import os
 import time
-import sys
 import subprocess
 
 
 class GatewayService(Services.Service.Service):
-    def __init__(self, command_prefix):
+    def __init__(self):
         Services.Service.Service.__init__(self, 'GatewayService')
-        self.command_prefix = ''
-        if command_prefix:
-            self.command_prefix = 'ssh ' + command_prefix + ' '
         self.gateway_status = Messages.GatewayStatus.GatewayStatus()
         self.gateway_status.hostname = self.hostname
-        self.gateway_status.gateway_name = command_prefix
         self.gateway_status_topic = '/biscuit/Messages/GatewayStatus'
         self.gateway_benchmark_results = Messages.GatewayBenchmarkResults.GatewayBenchmarkResults(self.hostname)
         self.gateway_benchmark_results_topic = '/biscuit/Messages/GatewayBenchmarkResults'
         self.update_gateway_status()
         self.update_benchmark_results()
         self.setup_handler('/biscuit/Messages/GatewayBenchmarkRequest', self.on_receive_gateway_benchmark_request)
-        self.setup_handler('/biscuit/Messages/GatewayRebootRequest', self.on_receive_gateway_reboot_request)
         self.setup_handler('/biscuit/Messages/GatewayStatusRequest', self.on_receive_gateway_status_request)
-
-
-    def on_receive_gateway_reboot_request(self, message):
-        m = Messages.GatewayRebootRequest.GatewayRebootRequest()
-        m.from_json(message)
-        # if m.hostname == self.hostname:
-        #     self.set_service_status('SHUTTING DOWN')
-        #     self.client.loop_stop()
-        #     self.client.disconnect()
-        #     return subprocess.check_output('reboot', shell=True)
 
     def on_receive_gateway_status_request(self, message):
         m = Messages.GatewayStatusRequest.GatewayStatusRequest()
@@ -55,18 +38,18 @@ class GatewayService(Services.Service.Service):
             if m.refresh:
                 self.update_benchmark_results()
             else:
-                self.send_benchmark_results()
+                self.send_gateway_status()
 
     def send_gateway_status(self):
         self.client.publish(self.gateway_status_topic, self.gateway_status.to_json(), qos=1)
-        self.send_benchmark_results()
+        self.send_gateway_status()
 
     def update_gateway_status(self):
-        self.gateway_status.access_point_address = self.get_access_point_address()
+        self.gateway_status.access_point = self.get_access_point_address()
         self.send_gateway_status()
 
     def get_access_point_address(self):
-        cmd = '%s iwconfig 2>/dev/null | grep Access | grep -v Not-Associated' % (self.command_prefix)
+        cmd = 'iwconfig 2>/dev/null | grep Access | grep -v Not-Associated'
         ret = ''
         try:
             access_point_address = subprocess.check_output(cmd, shell=True)
@@ -83,25 +66,19 @@ class GatewayService(Services.Service.Service):
         return benchmark_json
 
     def update_benchmark_results(self):
+        access_point = self.get_access_point_address()
         benchmark_json = self.get_benchmark_results()
-        self.gateway_benchmark_results.from_json(benchmark_json)
-        self.gateway_benchmark_results.last_update = time.time()
-        self.send_benchmark_results()
-
-    def send_benchmark_results(self):
-        self.client.publish(self.gateway_benchmark_results_topic, self.gateway_benchmark_results.to_json(), qos=1)
+        self.gateway_status.survey_status[access_point].from_json(benchmark_json)
+        self.gateway_status.survey_status[access_point].last_update = time.time()
+        self.send_gateway_status()
 
 
 
 
 if __name__ == '__main__':
-    arg_command_prefix = None
-    if len(sys.argv) > 1:
-        arg_command_prefix = sys.argv[1]
-
     while True:
         try:
-            component = GatewayService(arg_command_prefix)
+            component = GatewayService()
             component.run()
         except:
             None
