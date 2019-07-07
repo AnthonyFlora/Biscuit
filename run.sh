@@ -23,6 +23,12 @@
 # Blacklist
 # 92:AD:43:A5:3A:30
 
+# TODO
+# - Repair benchmark stats on GUI
+# - Merge Defribrillator to Gateway
+# - Remove Heartbeat
+# - Support access point scan
+
 
 
 HOST=`hostname -s`
