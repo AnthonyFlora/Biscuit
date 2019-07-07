@@ -49,3 +49,9 @@ class GatewayStatus:
 
     def to_json(self):
         return json.dumps(self, default=lambda x: x.__dict__, sort_keys=True)
+
+if __name__ == '__main__':
+    g = GatewayStatus()
+    x = g.to_json()
+    y = GatewayStatus()
+    y.from_json(x)

@@ -17,8 +17,6 @@ class GatewayService(Services.Service.Service):
         self.gateway_status = Messages.GatewayStatus.GatewayStatus()
         self.gateway_status.hostname = self.hostname
         self.gateway_status_topic = '/biscuit/Messages/GatewayStatus'
-        self.gateway_benchmark_results = Messages.GatewayBenchmarkResults.GatewayBenchmarkResults(self.hostname)
-        self.gateway_benchmark_results_topic = '/biscuit/Messages/GatewayBenchmarkResults'
         self.update_gateway_status()
         self.update_benchmark_results()
         self.setup_handler('/biscuit/Messages/GatewayBenchmarkRequest', self.on_receive_gateway_benchmark_request)
@@ -32,7 +30,6 @@ class GatewayService(Services.Service.Service):
             self.send_gateway_status()
 
     def on_receive_gateway_benchmark_request(self, message):
-        return # TODO
         m = Messages.GatewayBenchmarkRequest.GatewayBenchmarkRequest()
         m.from_json(message)
         if m.hostname == self.hostname:
@@ -66,6 +63,7 @@ class GatewayService(Services.Service.Service):
         return benchmark_json
 
     def update_benchmark_results(self):
+        return # TODO
         access_point = self.get_access_point_address()
         benchmark_json = self.get_benchmark_results()
         self.gateway_status.survey_status[access_point].from_json(benchmark_json)
