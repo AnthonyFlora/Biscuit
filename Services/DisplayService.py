@@ -36,7 +36,7 @@ class DisplayService(Services.Service.Service):
         version = m.version
         self.gui.queue_callback(functools.partial(gui.update_service_status, host, service, status))
         self.gui.queue_callback(functools.partial(gui.update_service_version, host, version))
-        if service == 'GatewayService':
+        if service == 'GatewayService' and status == 'OPERATIONAL':
             self.request_gateway_status(host)
             #self.request_benchmark_status(host)
 
