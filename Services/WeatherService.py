@@ -34,12 +34,12 @@ class WeatherService(Services.Service.Service):
         self.weather_report.weather_updates[self.sensor_to_room[m.sensor_id]].sensor_id = m.sensor_id
         self.weather_report.weather_updates[self.sensor_to_room[m.sensor_id]].temperature = m.temperature
         self.weather_report.weather_updates[self.sensor_to_room[m.sensor_id]].humidity = m.humidity
-        if is_initial_data or self.time_since_last_send() > 300:
+        if is_initial_data or self.time_since_last_send() > 30:
             self.send_weather_report()
 
     def send_weather_report(self):
         self.weather_report.last_update = time.time()
-        self.client.publish(self.weather_report_topic, self.weather_report.to_json(), qos=1)
+        self.client.publish(self.weather_report_topic, self.weather_report.to_json(), qos=1, retain=True)
         print('sent report %s' % str(self.weather_report))
 
 
