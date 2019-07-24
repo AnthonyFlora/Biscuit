@@ -10,9 +10,10 @@ import Config.Config
 
 
 class Service:
-    def __init__(self, service_name='Core'):
+    def __init__(self, service_name='Core', broker=Config.Config.DEFAULT_BROKER):
         self.hostname = self.get_hostname()
         self.service_name = service_name
+        self.broker = broker
         self.client = mqtt.Client()
         self.setup_last_will()
         self.connect_to_broker()
@@ -36,7 +37,7 @@ class Service:
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_receive
         self.client.on_disconnect = self.on_disconnect
-        self.client.connect(Config.Config.DEFAULT_BROKER, 1883)
+        self.client.connect(self.broker, 1883)
 
     def on_connect(self, client, userdata, flags, rc):
         if rc == 0:

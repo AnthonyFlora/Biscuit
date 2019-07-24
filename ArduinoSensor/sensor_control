@@ -9,7 +9,7 @@
 #define DHTTYPE DHT22
 
 // 001 office
-// 002 garage
+// 002 master
 // 003 basement
 // 004 family
 // 005 guest

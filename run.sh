@@ -36,8 +36,10 @@ DIRECTORY=`dirname $0`
 cd ${DIRECTORY}
 export PYTHONPATH=${DIRECTORY}
 
-if [ $HOST = "Anthonys-MacBook-Pro" ]; then
+if [ $HOST = "Anthonys-MBP" ]; then
   echo $HOST
+  python3 ${DIRECTORY}/Services/DisplayService.py &
+  python3 ${DIRECTORY}/Services/WeatherService.py &
 fi
 
 if [ $HOST = "gateway1" ]; then
@@ -67,6 +69,7 @@ fi
 
 if [ $HOST = "hyperion" ]; then
   python3 ${DIRECTORY}/Services/DisplayService.py &
+  python3 ${DIRECTORY}/Services/WeatherService.py &
 fi
 
 python3 ${DIRECTORY}/Services/SystemService.py &
