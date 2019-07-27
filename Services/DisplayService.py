@@ -237,9 +237,11 @@ if __name__== '__main__':
 
     services = []
     services.append('DefibrillatorService')
+    services.append('WeatherService')
     services.append('DisplayService')
     services.append('GatewayService')
     services.append('HeartbeatService')
+
     services.append('SystemService')
 
     gui = DisplayGUI(tk.Tk(), hosts, services)
