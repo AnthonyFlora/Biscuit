@@ -45,7 +45,7 @@ class GatewayService(Services.Service.Service):
         self.gateway_status.access_point = self.get_access_point_address()
 
     def get_access_point_address(self):
-        cmd = 'iwconfig 2>/dev/null | grep Access | grep -v Not-Associated'
+        cmd = 'iwconfig 2>/dev/null | grep -A 1 wlan1 | grep Access | grep -v Not-Associated'
         ret = ''
         try:
             access_point_address = subprocess.check_output(cmd, shell=True)
