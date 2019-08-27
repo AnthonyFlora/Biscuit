@@ -1,6 +1,5 @@
 import Services.Service
 import Messages.GatewayBenchmarkRequest
-import Messages.GatewayBenchmarkResults
 import Messages.GatewayStatus
 import Messages.GatewayStatusRequest
 import Messages.SystemRebootRequest
@@ -9,6 +8,7 @@ import Messages.ServiceStatus
 import datetime
 import time
 import subprocess
+import os
 
 
 class GatewayService(Services.Service.Service):
@@ -37,6 +37,9 @@ class GatewayService(Services.Service.Service):
                 self.update_benchmark_results()
             else:
                 self.send_gateway_status()
+
+    def on_receive_gateway_survey_request(self, message):
+        None
 
     def send_gateway_status(self):
         self.client.publish(self.gateway_status_topic, self.gateway_status.to_json(), qos=1)
@@ -83,4 +86,5 @@ if __name__ == '__main__':
         except:
             None
         print(str(datetime.datetime.now()), 'Restarting GatewayService..')
+        os.system('sudo ip link set wlan1 down; sudo ip addr flush dev wlan1; sudo ip link set wlan1 up; sudo iwconfig wlan1 essid xfinitywifi ap CE:CA:B5:EF:B5:50')
         time.sleep(10.0)

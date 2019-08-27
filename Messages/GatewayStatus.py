@@ -10,8 +10,11 @@ class SurveyStatus:
         self.upload = ''
         self.ping = ''
         self.last_update = ''
+        self.signal_quality = ''
 
     def from_dict(self, dict_data):
+        if 'signal_quality' in dict_data:
+            self.signal_quality = str(dict_data['signal_quality'])
         if 'access_point' in dict_data:
             self.access_point = str(dict_data['access_point'])
         self.download = str(dict_data['download'])
