@@ -75,9 +75,6 @@ class GatewayService(Services.Service.Service):
         self.gateway_status.survey_status[access_point_before].from_json(benchmark_json)
         self.gateway_status.survey_status[access_point_before].last_update = time.time()
 
-
-
-
 if __name__ == '__main__':
     while True:
         try:

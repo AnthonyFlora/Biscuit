@@ -156,7 +156,6 @@ class SiteSurveyView(tk.ttk.Treeview):
         self.column('gateway4', anchor='center', width=100)
 
     def clear(self, gateway):
-        print('clearing', gateway)
         signals = collections.defaultdict(lambda: '')
         children = self.get_children('')
         for child in children:
@@ -167,10 +166,7 @@ class SiteSurveyView(tk.ttk.Treeview):
             signals[gateway] = ''
             self.item(child, text=self.item(child, 'text'), values=(signals['gateway1'], signals['gateway2'], signals['gateway3'], signals['gateway4']))
 
-        print('cleared')
-
     def update(self, access_point, gateway, signal):
-        print('updating', gateway, access_point)
         signals = collections.defaultdict(lambda: '')
         children = self.get_children('')
         for child in children:
@@ -231,7 +227,6 @@ class NavigationFrame(tk.Frame):
             v[0].label['text'] = k
         self.content_label_frame[title][0].label['text'] = '> ' + title
         self.content_label_frame[title][1].tkraise()
-        print(title)
 
 
 class ContentFrame(tk.Frame):

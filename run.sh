@@ -29,6 +29,12 @@
 # - Remove Heartbeat
 # - Support access point scan
 
+# On PI..
+# raspivid -t 0 -w 1280 -h 720 -o - | nc 10.108.132.148 5000
+
+# On Viewer..
+# nc -l  5000 | mplayer -fps 60 -cache 2048 -
+
 
 
 HOST=`hostname -s`
@@ -43,25 +49,21 @@ if [ $HOST = "Anthonys-MBP" ]; then
 fi
 
 if [ $HOST = "gateway1" ]; then
-  #sudo ip link set wlan1 down; sudo ip addr flush dev wlan1; sudo ip link set wlan1 up; sudo iwconfig wlan1 essid xfinitywifi ap CE:CA:B5:EF:B5:50
   python3 ${DIRECTORY}/Services/GatewayService.py &
   python3 ${DIRECTORY}/Services/DefibrillatorService.py &
 fi
 
 if [ $HOST = "gateway2" ]; then
-  #sudo ip link set wlan1 down; sudo ip addr flush dev wlan1; sudo ip link set wlan1 up; sudo iwconfig wlan1 essid xfinitywifi ap CE:CA:B5:EF:B5:50
   python3 ${DIRECTORY}/Services/GatewayService.py &
   python3 ${DIRECTORY}/Services/DefibrillatorService.py &
 fi
 
 if [ $HOST = "gateway3" ]; then
-  #sudo ip link set wlan1 down; sudo ip addr flush dev wlan1; sudo ip link set wlan1 up; sudo iwconfig wlan1 essid xfinitywifi ap CE:CA:B5:EF:B5:50
   python3 ${DIRECTORY}/Services/GatewayService.py &
   python3 ${DIRECTORY}/Services/DefibrillatorService.py &
 fi
 
 if [ $HOST = "gateway4" ]; then
-  #sudo ip link set wlan1 down; sudo ip addr flush dev wlan1; sudo ip link set wlan1 up; sudo iwconfig wlan1 essid xfinitywifi ap CE:CA:B5:EF:B5:50
   python3 ${DIRECTORY}/Services/GatewayService.py &
   python3 ${DIRECTORY}/Services/DefibrillatorService.py &
 fi
