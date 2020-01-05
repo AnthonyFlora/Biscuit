@@ -18,7 +18,8 @@ class GatewayService(Services.Service.Service):
         self.gateway_status.hostname = self.hostname
         self.gateway_status_topic = '/biscuit/Messages/GatewayStatus'
         self.update_gateway_status()
-        self.update_benchmark_results()
+        # self.update_benchmark_results()
+        # Disable initial benchmarking for now
         self.setup_handler('/biscuit/Messages/GatewayBenchmarkRequest', self.on_receive_gateway_benchmark_request)
         self.setup_handler('/biscuit/Messages/GatewayStatusRequest', self.on_receive_gateway_status_request)
 
