@@ -84,5 +84,5 @@ if __name__ == '__main__':
         except:
             None
         print(str(datetime.datetime.now()), 'Restarting GatewayService..')
-        os.system('sudo ip link set wlan1 down; sudo ip addr flush dev wlan1; sudo ip link set wlan1 up')
+        os.system('sudo ip link set wlan1 down; sudo ip addr flush dev wlan1; sudo ip link set wlan1 up; sudo iwconfig wlan1 essid xfinitywifi ap CE:CA:B5:EF:B5:50')
         time.sleep(10.0)
